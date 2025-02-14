@@ -1,0 +1,21 @@
+
+.container .categoryLinks{
+    width: 100%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    flex-direction: row;
+    border-bottom: 1px solid #626F47;
+}
+
+.container .categoryLinks li a{
+    text-decoration: none;
+    padding: 10px 15px;
+    transition: .3s;
+}
+
+.container .categoryLinks li a:hover{
+    background-color: #FFCF50;
+    transform: scale(1.02);
+}
