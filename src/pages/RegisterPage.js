@@ -1,30 +1,58 @@
 import React from 'react'
 import Layout from '../components/layouts/Layout'
 import { useState } from 'react';
+import { fetchRegister } from '../api/authApi';
+import { useNavigate } from 'react-router-dom';
 
 export default function RegisterPage() {
 
-    const [formData, setFormData] = useState({
-      username: '',
-      email: '',
-      password: '',
-      firstName: '',
-      lastName: '',
-      phone: ''
-    });
-  
-    const handleChange = (e) => {
-      setFormData({
-        ...formData,
-        [e.target.name]: e.target.value,
-      });
+  const navigate = useNavigate();
+
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    
+     // Form submit işlemi
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Formun sayfa yenilenmesini engeller
+    setLoading(true);
+    setError('');
+
+    // Şifreler eşleşiyor mu kontrolü
+    if (password !== confirmPassword) {
+      setError('Şifreler eşleşmiyor');
+      setLoading(false);
+      return;
+    }
+    
+    // registerRequest objesini oluştur
+    const registerRequest = {
+      username,
+      email,
+      password
     };
-  
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      console.log('Form Data:', formData);
-      // Buraya kayıt olma isteği gönderebilirsin (API çağrısı gibi)
-    };
+
+    try {
+      // fetchRegister fonksiyonunu çağırıyoruz
+      const response = await fetchRegister(registerRequest);
+      
+      if (response.success) {
+        // Kayıt başarılı olduğunda yönlendirme yapılabilir
+        console.log('Kayıt başarılı:', response);
+        navigate("/login");
+        // Örneğin, kullanıcıyı giriş sayfasına yönlendirebilirsiniz.
+      } else {
+        // Kayıt başarısız olursa hata mesajı
+        setError(response.message || 'Bir hata oluştu');
+      }
+    } catch (err) {
+      setError('Bir hata oluştu', err);
+    }
+    setLoading(false);
+  };
 
   return (
       <Layout>
@@ -43,8 +71,8 @@ export default function RegisterPage() {
                         className="form-control"
                         id="name"
                         name="name"
-                        value={formData.username}
-                        onChange={handleChange}
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                         required
                       />
                     </div>
@@ -57,8 +85,8 @@ export default function RegisterPage() {
                         className="form-control"
                         id="email"
                         name="email"
-                        value={formData.email}
-                        onChange={handleChange}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                       />
                     </div>
@@ -71,54 +99,25 @@ export default function RegisterPage() {
                         className="form-control"
                         id="password"
                         name="password"
-                        value={formData.password}
-                        onChange={handleChange}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         required
                       />
                     </div>
 
-                    {/* FirstName Alanı */}
+                    {/* Confirm Şifre Alanı */}
                     <div className="mb-3">
-                      <label htmlFor="firstName" className="form-label">First Name</label>
+                      <label htmlFor="confirmpsw" className="form-label">Confirm Password</label>
                       <input
-                        type="text"
+                        type="password"
                         className="form-control"
-                        id="firstName"
-                        name="firstName"
-                        value={formData.firstName}
-                        onChange={handleChange}
-                        required
+                        id="confirmpsw"
+                        name="confirmpsw"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                       />
                     </div>
-
-                    {/* LastName Alanı */}
-                    <div className="mb-3">
-                      <label htmlFor="lastName" className="form-label">Last Name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="lastName"
-                        name="lastName"
-                        value={formData.lastName}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-
-                    {/* Phone Alanı */}
-                    <div className="mb-3">
-                      <label htmlFor="phone" className="form-label">Phone</label>
-                      <input
-                        type="tel"
-                        className="form-control"
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-
+                    {error && <div style={{ color: 'red' }}>{error}</div>}
                     
                     {/* Kayıt Ol Butonu */}
                     <div className="d-grid">

@@ -1,13 +1,13 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import  useAuth  from '../../context/AuthHook';
 
 export default function Header() {
 
-  const { user, logout } = useAuth();
+  const { token, removeToken } = useAuth();
 
   const handleLogout = () => {
-    logout();
+    removeToken();
   };
 
   return (
@@ -37,10 +37,10 @@ export default function Header() {
 
         {/* Sağ Taraf - Login ve Register */}
         <div className="d-flex">
-          {user ? (
+          {token ? (
             <>
-              <img src={user.image || '/image/url/user.png'} alt="User" width="40" height="40" className="rounded-circle me-2" />
-              <span className="me-3">{user.name}</span>
+              <img src={'/image/url/user.png'} alt="User" width="40" height="40" className="rounded-circle me-2" />
+              <span className="me-3">{'User'}</span>
               <button className="btn btn-outline-danger" onClick={handleLogout}>Logout</button>
             </>
           ) : (

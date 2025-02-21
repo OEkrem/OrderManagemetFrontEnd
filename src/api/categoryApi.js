@@ -1,6 +1,6 @@
 
 // src/api.js
-const url = 'http://localhost:8090/api/categories';
+const url = 'http://localhost:8090/api/v1/categories';
 
 // Kullanıcıları çekmek için GET isteği
 export const fetchCategories = async () => {

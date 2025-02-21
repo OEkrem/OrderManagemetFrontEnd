@@ -1,48 +1,50 @@
 import React from 'react';
 import Layout from '../components/layouts/Layout';
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchUsers } from '../api/userApi';
-import {useAuth} from '../context/AuthContext';
+import { fetchLogin } from '../api/authApi';
+import useAuth from '../context/AuthHook';
 
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  
+  // Form verilerini state'de tutacağız
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const [users, setUsers] = useState([]);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth(); // AuthContext'ten login fonksiyonunu alıyoruz
+  const { saveToken } = useAuth(); // AuthContext'ten login fonksiyonunu alıyoruz
 
-  // Sayfa açıldığında kullanıcıları çekiyoruz
-  useEffect(() => {
-    const getUsers = async () => {
-      try {
-        const data = await fetchUsers();
-        setUsers(data);
-      } catch (err) {
-        console.error('User fetching error:', err);
+   // Form submit işlemi
+   const handleSubmit = async (e) => {
+     e.preventDefault(); // Formun sayfa yenilenmesini engeller
+     setLoading(true);
+     setError('');
+     
+     const loginRequest = {
+       email,
+       password
+     };
+
+     try {
+      const response = await fetchLogin(loginRequest);
+      
+      if (response.token) {
+        console.log('Login başarili, token:', response.token);
+
+        //login(response.token);
+        saveToken(response.token);
+
+        navigate("/");// Başka sayfaya yönlendirme işlemi yapılabilir
+      } else {
+        setError('Kullanici adi veya şifre yanliş');
       }
-    };
-    getUsers();
-  }, []);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setError('');
-
-    const foundUser = users.find((user) => user.email === email && user.password === password);
-
-    if (foundUser) {
-      console.log('Login successful!', foundUser);
-      login(foundUser);
-      navigate('/');
-      // Burada giriş başarılı olduğunda yönlendirme veya localStorage kullanabilirsin.
-    } else {
-      setError('Invalid email or password');
+    } catch (err) {
+      setError('Bir hata oluştu');
     }
+    setLoading(false);
   };
 
   return (

@@ -1,6 +1,6 @@
 
 // src/api.js
-const url = 'http://localhost:8090/api/products';
+const url = 'http://localhost:8090/api/v1/products';
 
 // Kullanıcıları çekmek için GET isteği
 export const fetchProducts = async () => {
