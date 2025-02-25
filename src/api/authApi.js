@@ -1,3 +1,4 @@
+import useAuth from "../context/AuthHook";
 
 // src/api.js
 const url = 'http://localhost:8090/api/v1/auth';
@@ -20,6 +21,7 @@ export const fetchLogin = async (loginRequest) => {
     }
 
     const data = await response.json();
+    console.log(data);
     return data;
 
   } catch (err) {
@@ -55,3 +57,38 @@ export const fetchRegister = async (registerRequest) => {
     throw err; // Hata fırlatıyoruz ki caller method (örneğin, RegisterPage) bunu işleyebilsin
   }
 };
+
+
+export const refreshTokenRequest = async () => {
+  // Refresh token ile yeni access token al
+  try{
+    const refreshToken = localStorage.getItem("jwt_refreshToken");
+    const response = await fetch(url + '/refresh', { // -------------------------------------- değişcekkkk
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": `Bearer ${refreshToken}`,
+      },
+      body: JSON.stringify(refreshToken),
+      credentials: 'include',
+    });
+
+    const data = await response.json();
+    console.log("Refresh isteği attım response datası: ", data);
+
+    if(data.success){
+      localStorage.setItem("jwt_token", data.token);
+      console.log("Data success oldu işlem tamam..");
+      return data.token;
+    }
+    else{
+      throw new Error(data.message);
+    }
+
+  } catch (err) {
+    // Ağ hataları gibi diğer hataları yakalamak için
+    console.error('RefreshToken error: ', err);
+    throw err; // Hata fırlatıyoruz ki caller method (örneğin, RegisterPage) bunu işleyebilsin
+  }
+
+  };

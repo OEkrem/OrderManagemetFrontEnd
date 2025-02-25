@@ -3,6 +3,7 @@ import Layout from '../components/layouts/Layout'
 import { useState } from 'react';
 import { fetchRegister } from '../api/authApi';
 import { useNavigate } from 'react-router-dom';
+import useAuth from '../context/AuthHook';
 
 export default function RegisterPage() {
 
@@ -14,6 +15,8 @@ export default function RegisterPage() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+
+    const {saveToken } = useAuth();
     
      // Form submit işlemi
   const handleSubmit = async (e) => {
@@ -37,12 +40,14 @@ export default function RegisterPage() {
 
     try {
       // fetchRegister fonksiyonunu çağırıyoruz
+      console.log('Kayıt işlemleri ------');
       const response = await fetchRegister(registerRequest);
       
       if (response.success) {
         // Kayıt başarılı olduğunda yönlendirme yapılabilir
-        console.log('Kayıt başarılı:', response);
-        navigate("/login");
+        saveToken(response.accessToken);
+        console.log("AccessToken Kaydedildi.. : ", localStorage.getItem("jwt_token"));
+        navigate("/");
         // Örneğin, kullanıcıyı giriş sayfasına yönlendirebilirsiniz.
       } else {
         // Kayıt başarısız olursa hata mesajı

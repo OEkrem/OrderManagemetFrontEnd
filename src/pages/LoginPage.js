@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { saveToken } = useAuth(); // AuthContext'ten login fonksiyonunu alıyoruz
+  const { saveToken, saveRefreshToken, setIsLogin } = useAuth(); // AuthContext'ten login fonksiyonunu alıyoruz
 
    // Form submit işlemi
    const handleSubmit = async (e) => {
@@ -32,10 +32,14 @@ export default function LoginPage() {
       const response = await fetchLogin(loginRequest);
       
       if (response.token) {
-        console.log('Login başarili, token:', response.token);
 
-        //login(response.token);
+        localStorage.setItem("jwt_token", response.token);
+        localStorage.setItem("jwt_refreshToken", response.refreshToken);
+        console.log("Kaydettim localeStorage'ye.");
         saveToken(response.token);
+        saveRefreshToken(response.refreshToken);
+        console.log("Token ve Refresh token kaydedildi..");
+        setIsLogin(true);
 
         navigate("/");// Başka sayfaya yönlendirme işlemi yapılabilir
       } else {

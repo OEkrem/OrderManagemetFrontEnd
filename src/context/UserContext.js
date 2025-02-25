@@ -19,6 +19,7 @@ export const UserProvider = ({ children }) => {
         setUsers(userObjects);
       } catch (error) {
         console.error('Veri çekilemedi:', error);
+
       }
     };
 

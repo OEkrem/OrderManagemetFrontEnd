@@ -4,10 +4,12 @@ import  useAuth  from '../../context/AuthHook';
 
 export default function Header() {
 
-  const { token, removeToken } = useAuth();
+  const { token, isLogin, setIsLogin, removeToken } = useAuth();
 
   const handleLogout = () => {
     removeToken();
+    localStorage.clear();
+    setIsLogin(false);
   };
 
   return (
@@ -29,6 +31,11 @@ export default function Header() {
             <li className="nav-item">
               <NavLink className="nav-link" to="/products">Products</NavLink>
             </li>
+            {token ? (
+             <li className="nav-item">
+              <NavLink className="nav-link" to="/users">Users</NavLink>
+            </li> 
+            ) : (<></>)}
             <li className="nav-item">
               <NavLink className="nav-link" to="/categories">Categories</NavLink>
             </li>
@@ -39,8 +46,10 @@ export default function Header() {
         <div className="d-flex">
           {token ? (
             <>
+              <NavLink className="btn btn-outline-primary me-2" to="/userdetails">
               <img src={'/image/url/user.png'} alt="User" width="40" height="40" className="rounded-circle me-2" />
               <span className="me-3">{'User'}</span>
+              </NavLink>
               <button className="btn btn-outline-danger" onClick={handleLogout}>Logout</button>
             </>
           ) : (
