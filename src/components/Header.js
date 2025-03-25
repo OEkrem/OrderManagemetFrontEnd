@@ -6,7 +6,7 @@ import {logout} from '../api/authApi';
 
 export default function Header() {
 
-  const { isLogin, roles, removeToken } = useAuth();
+  const { isLogin, roles, user, removeToken } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {

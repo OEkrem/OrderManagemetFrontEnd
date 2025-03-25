@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchUserByEmail } from '../api/userApi';
 
 const useAuth = () => {
   const [token, setToken] = useState(null);
   const [isLogin, setIsLogin] = useState(false);
   const [roles, setRoles] = useState([]);
+  const [user, setUser] = useState({});
   
   const navigate = useNavigate();
 
@@ -13,6 +15,7 @@ const useAuth = () => {
     if (storedToken) {
       setToken(storedToken);
       setRoles(getRolesFromToken(storedToken));
+      setUserFromToken(storedToken);
       setIsLogin(true);
     }
   }, []);
@@ -21,6 +24,7 @@ const useAuth = () => {
     localStorage.setItem('jwt_token', newToken);
     setToken(newToken);
     setRoles(getRolesFromToken(newToken));
+    setUserFromToken(newToken);
     setIsLogin(true);
   };
 
@@ -28,14 +32,8 @@ const useAuth = () => {
     localStorage.clear();
     setToken(null);
     setIsLogin(false);
+    setUser(null);
     setRoles([]);
-  };
-
-  const isExpired = (token) => {
-    if (!token) return true;
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const currentTime = Math.floor(Date.now() / 1000); 
-    return payload.exp < currentTime;
   };
 
   const getRolesFromToken = (token) => {
@@ -44,30 +42,42 @@ const useAuth = () => {
     return payload.roles || [];
   };
 
-  /*const refreshAccessToken = async () => {
-    if (localStorage.getItem("jwt_token")) {
-      try {
-        const response = await refreshTokenRequest();
-        if (response.data.success && response.data.token) {
-          saveToken(response.data.token);
-          console.log("Access Token değiştirildi..");
-        }
-      } catch (error) {
-        console.error('Error refreshing token:', error);
-        removeToken();
-        navigate("/");
-      }
+  const setUserFromToken = async (token) => {
+    try {
+      const username = getUsernameFromToken(token);
+      const userData = await fetchUserByEmail(username);
+      setUser(userData);
+    } catch (err) {
+      console.error("Error fetching user data: ", err);
     }
   };
 
-  useEffect(() => {
-    if (token != null && isExpired(token)) {
-      console.log("User effect - isExpired - AccessToken expired..");
-      refreshAccessToken();
-    }
-  }, [token]);*/
-
-  return { token, isLogin, roles, saveToken, removeToken, isExpired, setIsLogin };
+  return { token, user, isLogin, roles, saveToken, removeToken, setIsLogin, setUser };
 };
+
+export function getUsernameFromToken(token) {
+  try {
+      if (!token) {
+          return "Unknown User";
+      }
+  
+      // Token'ı . ile ayır
+      const parts = token.split('.');
+  
+      if (parts.length !== 3) {
+          throw new Error("Invalid token");
+      }
+  
+      // Payload kısmını base64 decode et
+      const payload = parts[1];
+      const decodedPayload = atob(payload); // base64 çözümleme
+      const parsedPayload = JSON.parse(decodedPayload); // JSON parse
+  
+      return parsedPayload.sub;
+  } catch (error) {
+      console.error("Error while getting username from token: ", error);
+      return "Unknown User";
+  }
+}
 
 export default useAuth;

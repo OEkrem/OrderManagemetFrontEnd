@@ -14,8 +14,8 @@ api.interceptors.request.use(
       try {
         const res = await refreshTokenRequest();
         token = res.data.token;
-        console.log("Access token refreshed");
         localStorage.setItem("jwt_token", token);
+        console.log("Access token refreshed - api.Request");
       } catch (refreshError) {
         console.error("Refresh token expired or invalid");
         localStorage.clear();
@@ -39,13 +39,14 @@ api.interceptors.response.use(
       try {
         const res = await refreshTokenRequest();
         const newAccessToken = res.data.token;
-        console.log("Access token refreshed");
         localStorage.setItem("jwt_token", newAccessToken);
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        console.log("Access token refreshed - api.Response");
         return api(originalRequest);
       } catch (refreshError) {
         console.error("Refresh token expired or invalid");
         localStorage.clear();
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }

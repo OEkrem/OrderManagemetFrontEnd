@@ -1,4 +1,5 @@
 import api from './apiClient';
+import axios from 'axios';
 
 const url = '/auth'; // base url + /auth
 
@@ -25,7 +26,6 @@ export const logout = async () => {
   }
 };
 
-// Kullanıcı kaydı yapmak için POST isteği
 export const fetchRegister = async (registerRequest) => {
   try {
     const response = await api.post(url + '/register', registerRequest);
@@ -39,10 +39,9 @@ export const fetchRegister = async (registerRequest) => {
   }
 };
 
-
 export const refreshTokenRequest = async () => {
   try{
-    const response = await api.post(url + '/refresh', {}, { withCredentials: true,});
+    const response = await axios.post('http://localhost:8090/api/v1/auth/refresh', {}, { withCredentials: true, headers: {'Content-Type': 'application/json'}});
 
     if(response.data.success) return response;
     else throw new Error(response.data.message);

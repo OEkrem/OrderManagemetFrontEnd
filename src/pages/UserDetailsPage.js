@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { fetchUserByEmail, updateUser } from "../api/userApi";
+import { fetchUserByEmail, patchUser, updateUser } from "../api/userApi";
 import MainLayout from '../layouts/MainLayout';
 import UserDetailsForm from '../components/UserDetailsForm/UserDetailsForm';
 import './UserDetailsPage.css'; // CSS dosyasını import edin
-
+import UserNotifications from '../components/UserNotificationSettings/UserNotifications';
+import { getUsernameFromToken } from '../context/AuthHook';
 
 export default function UserDetailsPage() {
     const [user, setUser] = useState({});
@@ -38,12 +39,23 @@ export default function UserDetailsPage() {
         }
     }, [username]);
 
-    const handleSave = async (updatedUser) => {
+    const handleSaveUser = async (updatedUser) => {
         try {
             console.log("Updated user: ", updatedUser);
-            //const updatedUserData = await updateUser(user.id, updatedUser);
+            const updatedUserData = await updateUser(user.id, updatedUser);
             //setUser(updatedUserData);
-            //console.log("User updated: ", updatedUserData);
+            console.log("User updated: ", user);
+        } catch (err) {
+            setError("Kullanıcı verileri güncellenirken bir hata oluştu.");
+        }
+    };
+
+    const handlePatchUser = async (patchedInformations) => {
+        try {
+            console.log("Updated user: ", patchedInformations);
+            const patchedUser = await patchUser(user.id, patchedInformations);
+            //setUser(updatedUserData);
+            console.log("User updated: ", user);
         } catch (err) {
             setError("Kullanıcı verileri güncellenirken bir hata oluştu.");
         }
@@ -62,33 +74,13 @@ export default function UserDetailsPage() {
     return (
         <MainLayout>
             <div className='userDetailsPage-container'>
-                <UserDetailsForm user={user} onSave={handleSave} />
+                <UserDetailsForm user={user} onSave={handleSaveUser} />
+                {error && <div style={{ color: 'red' }}>{error}</div>}
+            </div>
+            <div className='userDetailsPage-container'>
+                <UserNotifications user={user} onSave={handlePatchUser} />
+                {error && <div style={{ color: 'red' }}>{error}</div>}
             </div>
         </MainLayout>
     );
-}
-
-function getUsernameFromToken(token) {
-    try {
-        if (!token) {
-            return "Unknown User";
-        }
-    
-        // Token'ı . ile ayır
-        const parts = token.split('.');
-    
-        if (parts.length !== 3) {
-            throw new Error("Invalid token");
-        }
-    
-        // Payload kısmını base64 decode et
-        const payload = parts[1];
-        const decodedPayload = atob(payload); // base64 çözümleme
-        const parsedPayload = JSON.parse(decodedPayload); // JSON parse
-    
-        return parsedPayload.sub;
-    } catch (error) {
-        console.error("Error while getting username from token: ", error);
-        return "Unknown User";
-    }
 }
