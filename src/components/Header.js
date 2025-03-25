@@ -1,15 +1,18 @@
-import React from 'react'
 import { NavLink } from 'react-router-dom';
-import  useAuth  from '../../context/AuthHook';
+import  useAuth  from '../context/AuthHook';
+import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import {logout} from '../api/authApi';
 
 export default function Header() {
 
-  const { token, isLogin, setIsLogin, removeToken } = useAuth();
+  const { isLogin, roles, removeToken } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
+    logout();
     removeToken();
-    localStorage.clear();
-    setIsLogin(false);
+    navigate("/");
   };
 
   return (
@@ -31,10 +34,19 @@ export default function Header() {
             <li className="nav-item">
               <NavLink className="nav-link" to="/products">Products</NavLink>
             </li>
-            {token ? (
-             <li className="nav-item">
-              <NavLink className="nav-link" to="/users">Users</NavLink>
-            </li> 
+            {isLogin && roles.includes('ROLE_ADMIN') ? (
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/users">Users</NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/orders">Orders</NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/payments">Payments</NavLink>
+                </li>
+              </>
+            
             ) : (<></>)}
             <li className="nav-item">
               <NavLink className="nav-link" to="/categories">Categories</NavLink>
@@ -44,7 +56,7 @@ export default function Header() {
 
         {/* Sağ Taraf - Login ve Register */}
         <div className="d-flex">
-          {token ? (
+          {isLogin ? (
             <>
               <NavLink className="btn btn-outline-primary me-2" to="/userdetails">
               <img src={'/image/url/user.png'} alt="User" width="40" height="40" className="rounded-circle me-2" />

@@ -1,57 +1,66 @@
+import api from './apiClient';
 
-// src/api.js
-const url = 'http://localhost:8090/api/v1/products';
+const url = '/products';
 
-// Kullanıcıları çekmek için GET isteği
-export const fetchProducts = async () => {
-    const response = await fetch(url);
-    const data = await response.json(url);
-    return data;
-  };
+  // Kullanıcıları çekmek için GET isteği
+  export const fetchProducts = async (page = 0, size = 10, categoryId=null) => {
+    //console.log("ProductApi - fetchProducts: ", page, size, categoryId);
+    try{
+      const params = {
+        page: page,
+        size: size,
+      };
+      if (categoryId) {
+        params.categoryId = categoryId;
+      }
 
-  export const fetchProductsByCategoryId = async (id) => {
-    const response = await fetch(url + `/categories/${id}`);
-    const data = await response.json();
-    return data;
+      const response = await api.get(url, {params});
+      return response.data;
+    }catch(error){
+      console.error('Ürünler çekilirken hata oluştu: ', error);
+      throw error;
+    }
   };
 
   export const fetchProductsByProductId = async (id) => {
-    const response = await fetch(url + `/${id}`);
-    const data = await response.json();
-    return data;
+    try{
+      const response = await api.get(url + `/${id}`);
+      return response.data;
+    }catch(error){
+      console.error('Ürün çekilirken hata oluştu: ', error);
+      throw error;
+    }
   };
-
   
-  // Kullanıcı oluşturmak için POST isteği
+  // Ürün oluşturmak için POST isteği
   export const createProduct = async (product) => {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(product),
-    });
-    const data = await response.json();
-    return data;
+    try{
+      const response = await api.post(url, product);
+      return response.data;
+    }catch(error){
+      console.error('Ürün oluşturulurken hata oluştu: ', error);
+      throw error;
+    }
   };
   
-  // Kullanıcı güncellemek için PUT isteği
+  // Ürün güncellemek için PUT isteği
   export const updateProduct = async (id, updatedProduct) => {
-    const response = await fetch(url + `/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedProduct),
-    });
-    const data = await response.json();
-    return data;
+    try{
+      const response = await api.put(url + `/${id}`, updatedProduct);
+      return response.data;
+    }catch(error){
+      console.error(`Ürün ${id} güncellenirken hata oluştu: `, error);
+      throw error;
+    }
   };
   
-  // Kullanıcı silmek için DELETE isteği
+  // Ürün silmek için DELETE isteği
   export const deleteProduct = async (id) => {
-    const response = await fetch(url + `/${id}`, {
-      method: 'DELETE',
-    });
-    return response.ok; // Silme işlemi başarılıysa true döner
+    try{
+      const response = await api.delete(url + `/${id}`);
+      return response.status === 204;
+    }catch(error){
+      console.error(`Ürün ${id} silinirken hata oluştu: `, error);
+      throw error;
+    }
   };

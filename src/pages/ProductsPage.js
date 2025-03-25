@@ -1,14 +1,21 @@
 import React from 'react';
-import Layout from '../components/layouts/Layout';
+import MainLayout from '../layouts/MainLayout';
 import { ProductProvider } from '../context/ProductContext';
 import ProductList from '../lists/ProductList';
+import ProductList2 from '../lists/ProductList2';
 
 export default function ProductsPage() {
   return (
-      <Layout>
+      <MainLayout>
         <ProductProvider>
           <ProductList /> 
         </ProductProvider>
-      </Layout>   
+
+        <hr/>
+
+        <ProductList2 selectedCategory={1}>
+        </ProductList2>
+
+      </MainLayout>
   )
 }

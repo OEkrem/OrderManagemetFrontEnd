@@ -15,7 +15,8 @@ export const ProductProvider = ({ children }) => {
     const getProducts = async () => {
       try {
         const data = await fetchProducts();
-        const userObjects = data.map( (product) => new Product(product.id, product.name, product.category_id, product.description, product.price, product.image));
+        //console.log("Product Data: ", data);
+        const userObjects = data.content.map( (product) => new Product(product.id, product.name, product.category_id, product.description, product.price, product.image));
         setProducts(userObjects);
       } catch (error) {
         console.error('Veri çekilemedi:', error);

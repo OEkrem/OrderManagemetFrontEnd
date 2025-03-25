@@ -1,10 +1,9 @@
 import React from 'react';
-import Layout from '../components/layouts/Layout';
+import MainLayout from '../layouts/MainLayout';
 import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchLogin } from '../api/authApi';
 import useAuth from '../context/AuthHook';
-
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -15,9 +14,8 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { saveToken, saveRefreshToken, setIsLogin } = useAuth(); // AuthContext'ten login fonksiyonunu alıyoruz
+  const { saveToken, setIsLogin } = useAuth();
 
-   // Form submit işlemi
    const handleSubmit = async (e) => {
      e.preventDefault(); // Formun sayfa yenilenmesini engeller
      setLoading(true);
@@ -32,28 +30,20 @@ export default function LoginPage() {
       const response = await fetchLogin(loginRequest);
       
       if (response.token) {
-
-        localStorage.setItem("jwt_token", response.token);
-        localStorage.setItem("jwt_refreshToken", response.refreshToken);
-        console.log("Kaydettim localeStorage'ye.");
         saveToken(response.token);
-        saveRefreshToken(response.refreshToken);
-        console.log("Token ve Refresh token kaydedildi..");
         setIsLogin(true);
-
-        navigate("/");// Başka sayfaya yönlendirme işlemi yapılabilir
-      } else {
-        setError('Kullanici adi veya şifre yanliş');
-      }
+        navigate("/");
+      } else setError('Kullanici adi veya şifre yanliş');
+      
     } catch (err) {
-      setError('Bir hata oluştu');
+      setError('Giriş başarısız. Lütfen bilgilerinizi kontrol edin.');
     }
     setLoading(false);
   };
 
   return (
     <div>
-      <Layout>
+      <MainLayout>
             <div className="container d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
             <div className="row w-100">
                 <div className="col-md-6 mx-auto">
@@ -85,13 +75,14 @@ export default function LoginPage() {
                         />
                     </div>
                     <button type="submit" className="btn btn-primary w-100">Login</button>
+                    {error && <div style={{ color: 'red' }}>{error}</div>}
                     </form>
                 </div>
                 </div>
             </div>
             </div>
 
-      </Layout>
+      </MainLayout>
     </div>
   )
 }

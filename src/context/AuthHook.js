@@ -1,89 +1,73 @@
 import { useState, useEffect } from 'react';
-import { refreshTokenRequest } from '../api/authApi';
 import { useNavigate } from 'react-router-dom';
 
-
 const useAuth = () => {
-    const [token, setToken] = useState(null);
-    const [refreshToken, setRefreshToken] = useState(null);
-    const [isLogin, setIsLogin] = useState(false);
+  const [token, setToken] = useState(null);
+  const [isLogin, setIsLogin] = useState(false);
+  const [roles, setRoles] = useState([]);
   
-    const navigation = useNavigate();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        // Component mount olduğunda token'ı localStorage'den al
-        const storedToken = localStorage.getItem('jwt_token');
-        const storedRefreshToken = localStorage.getItem('jwt_refreshToken');
-        if (storedToken) {
-            setToken(storedToken);
-            setRefreshToken(storedRefreshToken);
-        }
-    }, []);
-
-    const saveToken = (newToken) => {
-        // Token'ı localStorage'e ve state'e kaydet
-        localStorage.setItem('jwt_token', newToken);
-        setToken(newToken);
-    };
-
-    const saveRefreshToken = (newToken) => {
-      localStorage.setItem('jwt_refreshToken', newToken);
-      setRefreshToken(newToken);
+  useEffect(() => {
+    const storedToken = localStorage.getItem('jwt_token');
+    if (storedToken) {
+      setToken(storedToken);
+      setRoles(getRolesFromToken(storedToken));
+      setIsLogin(true);
     }
+  }, []);
 
-    const removeToken = () => {
-        // Token'ı hem state'ten hem de localStorage'den sil
-        localStorage.clear();
-        setToken(null);
-        setRefreshToken(null);
-        setIsLogin(false);
-    };
+  const saveToken = (newToken) => {
+    localStorage.setItem('jwt_token', newToken);
+    setToken(newToken);
+    setRoles(getRolesFromToken(newToken));
+    setIsLogin(true);
+  };
 
-    // token expired olmuş ise true döner
-    const isExpired = (token) => {
-        if (!token) return true;
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const currentTime = Math.floor(Date.now() / 1000); 
-        return payload.exp < currentTime;
-    }
+  const removeToken = () => {
+    localStorage.clear();
+    setToken(null);
+    setIsLogin(false);
+    setRoles([]);
+  };
 
-    // Refresh token ile yeni access token almak
-  const refreshAccessToken = async () => {
-    console.log("Refresh İsteği: ");
+  const isExpired = (token) => {
+    if (!token) return true;
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const currentTime = Math.floor(Date.now() / 1000); 
+    return payload.exp < currentTime;
+  };
+
+  const getRolesFromToken = (token) => {
+    if (!token) return [];
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.roles || [];
+  };
+
+  /*const refreshAccessToken = async () => {
     if (localStorage.getItem("jwt_token")) {
       try {
-        console.log("İşlem yapılacak token: ", localStorage.getItem('jwt_refreshToken'));
         const response = await refreshTokenRequest();
-
-        if (response.success && response.token) {
-          localStorage.clear();  
-          localStorage.setItem('jwt_token', response.token);
-          setToken(response.token);
-          console.log("Token değiştirildi: ", response.token);
+        if (response.data.success && response.data.token) {
+          saveToken(response.data.token);
+          console.log("Access Token değiştirildi..");
         }
       } catch (error) {
         console.error('Error refreshing token:', error);
         removeToken();
-        navigation("/"); // hata olduğunda çıkış LogOut yapıldı...
+        navigate("/");
       }
     }
   };
 
-     // Token'ı kontrol et ve eğer süresi dolmuşsa refresh token ile yenile
-    useEffect(() => {
-        console.log("Use effect isExpired kontrolü");
-        console.log("Token: ", token);
-        if (token != null && isExpired(token)) {
-            console.log("User effect - isExpired - AccessToken expired..");
-            refreshAccessToken();
-        }
-        console.log("RefreshToken: ", refreshToken);
-        if (refreshToken != null && isExpired(refreshToken)) {
-          console.log("User effect - isExpired - RefreshToken expired..");
-        }
-    }, [token]);  // Token değiştiğinde kontrol et
+  useEffect(() => {
+    if (token != null && isExpired(token)) {
+      console.log("User effect - isExpired - AccessToken expired..");
+      refreshAccessToken();
+    }
+  }, [token]);*/
 
-    return { token, refreshToken, isLogin, saveToken, saveRefreshToken, removeToken, refreshAccessToken, isExpired, setIsLogin };
+  return { token, isLogin, roles, saveToken, removeToken, isExpired, setIsLogin };
 };
 
 export default useAuth;

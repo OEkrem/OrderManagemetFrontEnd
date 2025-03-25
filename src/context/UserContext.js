@@ -15,11 +15,10 @@ export const UserProvider = ({ children }) => {
     const getUsers = async () => {
       try {
         const data = await fetchUsers();
-        const userObjects = data.map( (userdata) => new User(userdata.id, userdata.username, userdata.firstName, userdata.lastName, userdata.email, userdata.password, userdata.phone));
+        const userObjects = data.content.map( (userdata) => new User(userdata.id, userdata.username, userdata.firstName, userdata.lastName, userdata.email, userdata.password, userdata.phone));
         setUsers(userObjects);
       } catch (error) {
         console.error('Veri çekilemedi:', error);
-
       }
     };
 

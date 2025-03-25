@@ -1,12 +1,12 @@
 import React from 'react';
-import Layout from '../components/layouts/Layout';
+import MainLayout from '../layouts/MainLayout';
 import { UserProvider } from '../context/UserContext';
 import UserList from '../lists/UserList';
 
-export default function CategoryPage() {
+export default function UserPage() {
   return (
     <div>
-      <Layout>
+      <MainLayout>
 
         <UserProvider>
           <div className='user-container'>
@@ -14,7 +14,7 @@ export default function CategoryPage() {
           </div> 
         </UserProvider>
         
-      </Layout>
+      </MainLayout>
     </div>
   )
 }

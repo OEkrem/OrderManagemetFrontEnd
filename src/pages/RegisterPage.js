@@ -1,37 +1,31 @@
 import React from 'react'
-import Layout from '../components/layouts/Layout'
+import MainLayout from '../layouts/MainLayout';
 import { useState } from 'react';
 import { fetchRegister } from '../api/authApi';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../context/AuthHook';
 
 export default function RegisterPage() {
 
   const navigate = useNavigate();
 
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-    const {saveToken } = useAuth();
-    
-     // Form submit işlemi
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Formun sayfa yenilenmesini engeller
+    e.preventDefault();
     setLoading(true);
     setError('');
 
-    // Şifreler eşleşiyor mu kontrolü
     if (password !== confirmPassword) {
       setError('Şifreler eşleşmiyor');
       setLoading(false);
       return;
     }
     
-    // registerRequest objesini oluştur
     const registerRequest = {
       username,
       email,
@@ -39,20 +33,9 @@ export default function RegisterPage() {
     };
 
     try {
-      // fetchRegister fonksiyonunu çağırıyoruz
-      console.log('Kayıt işlemleri ------');
       const response = await fetchRegister(registerRequest);
-      
-      if (response.success) {
-        // Kayıt başarılı olduğunda yönlendirme yapılabilir
-        saveToken(response.accessToken);
-        console.log("AccessToken Kaydedildi.. : ", localStorage.getItem("jwt_token"));
-        navigate("/");
-        // Örneğin, kullanıcıyı giriş sayfasına yönlendirebilirsiniz.
-      } else {
-        // Kayıt başarısız olursa hata mesajı
-        setError(response.message || 'Bir hata oluştu');
-      }
+      if (response.success) navigate("/login");
+      else setError(response.message || 'Bir hata oluştu');
     } catch (err) {
       setError('Bir hata oluştu', err);
     }
@@ -60,7 +43,7 @@ export default function RegisterPage() {
   };
 
   return (
-      <Layout>
+      <MainLayout>
         <div className="container mt-5">
           <div className="row justify-content-center">
             <div className="col-md-6">
@@ -137,8 +120,6 @@ export default function RegisterPage() {
             </div>
           </div>
         </div>
-      </Layout>
+      </MainLayout>
   )
 }
-    
-

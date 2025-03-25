@@ -1,12 +1,12 @@
 import React from 'react';
-import Layout from '../components/layouts/Layout';
+import MainLayout from '../layouts/MainLayout';
 import { CategoryProvider } from '../context/CategoryContext';
 import CategoryList from '../lists/CategoryList';
 
 export default function CategoryPage() {
   return (
     <div>
-      <Layout>
+      <MainLayout>
 
         <CategoryProvider>
           <div className='category-container'>
@@ -14,7 +14,7 @@ export default function CategoryPage() {
           </div> 
         </CategoryProvider>
         
-      </Layout>
+      </MainLayout>
     </div>
   )
 }

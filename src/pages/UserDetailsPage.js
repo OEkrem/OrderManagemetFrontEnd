@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { fetchUsers } from "../api/userApi";
-import Layout from '../components/layouts/Layout';
+import { fetchUserByEmail, updateUser } from "../api/userApi";
+import MainLayout from '../layouts/MainLayout';
+import UserDetailsForm from '../components/UserDetailsForm/UserDetailsForm';
+import './UserDetailsPage.css'; // CSS dosyasını import edin
+
 
 export default function UserDetailsPage() {
-    const [users, setUsers] = useState([]);
+    const [user, setUser] = useState({});
     const [username, setUsername] = useState("Unknown User");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -20,8 +23,9 @@ export default function UserDetailsPage() {
         // Kullanıcıları fetch et
         const fetchData = async () => {
             try {
-                const usersData = await fetchUsers();
-                setUsers(usersData);
+                const usersData = await fetchUserByEmail(username);
+                setUser(usersData);
+                console.log("User data: ", usersData);
             } catch (err) {
                 setError("Kullanıcı verileri alınırken bir hata oluştu.");
             } finally {
@@ -29,8 +33,21 @@ export default function UserDetailsPage() {
             }
         };
 
-        fetchData();
-    }, []);
+        if (username !== "Unknown User") {
+            fetchData();
+        }
+    }, [username]);
+
+    const handleSave = async (updatedUser) => {
+        try {
+            console.log("Updated user: ", updatedUser);
+            //const updatedUserData = await updateUser(user.id, updatedUser);
+            //setUser(updatedUserData);
+            //console.log("User updated: ", updatedUserData);
+        } catch (err) {
+            setError("Kullanıcı verileri güncellenirken bir hata oluştu.");
+        }
+    };
 
     // Hata mesajı
     if (error) {
@@ -43,37 +60,35 @@ export default function UserDetailsPage() {
     }
 
     return (
-        <Layout>
-            <div>
-                <h1>Kullanıcı Adı: {username}</h1>
-                <h2>Kullanıcılar:</h2>
-                <ul>
-                    {users.map((user, index) => (
-                        <li key={index}>{user.email} - {user.password} - {user.username} - {user.phone}</li>
-                    ))}
-                </ul>
-            </div>    
-        </Layout>
+        <MainLayout>
+            <div className='userDetailsPage-container'>
+                <UserDetailsForm user={user} onSave={handleSave} />
+            </div>
+        </MainLayout>
     );
 }
 
 function getUsernameFromToken(token) {
-    if (!token) {
+    try {
+        if (!token) {
+            return "Unknown User";
+        }
+    
+        // Token'ı . ile ayır
+        const parts = token.split('.');
+    
+        if (parts.length !== 3) {
+            throw new Error("Invalid token");
+        }
+    
+        // Payload kısmını base64 decode et
+        const payload = parts[1];
+        const decodedPayload = atob(payload); // base64 çözümleme
+        const parsedPayload = JSON.parse(decodedPayload); // JSON parse
+    
+        return parsedPayload.sub;
+    } catch (error) {
+        console.error("Error while getting username from token: ", error);
         return "Unknown User";
     }
-
-    // Token'ı . ile ayır
-    const parts = token.split('.');
-
-    if (parts.length !== 3) {
-        throw new Error("Invalid token");
-    }
-
-    // Payload kısmını base64 decode et
-    const payload = parts[1];
-    const decodedPayload = atob(payload); // base64 çözümleme
-    const parsedPayload = JSON.parse(decodedPayload); // JSON parse
-
-    // Kullanıcı adını (genellikle 'sub' ya da 'username' olarak saklanır) al
-    return parsedPayload.sub || parsedPayload.username || "Unknown User";
 }

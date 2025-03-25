@@ -1,51 +1,62 @@
+import api from './apiClient';
 
-// src/api.js
-const url = 'http://localhost:8090/api/v1/categories';
+const url = '/categories';
 
-// Kullanıcıları çekmek için GET isteği
-export const fetchCategories = async () => {
-    const response = await fetch(url);
-    const data = await response.json();
-    return data;
+  // Kategori çekmek için GET isteği
+  export const fetchCategories = async () => {
+    try{
+      const response = await api.get(url);
+      //console.log("CategoryApi - FetchCategories");
+      return response.data;
+    }catch(error){
+      console.error('Kategoriler çekilirken hata oluştu: ', error);
+      throw error;
+    }
   };
 
   export const fetchCategory = async (id) => {
-    const response = await fetch(url + `/${id}`)
-    const data = await response.json();
-    return data;
+    try{
+      const response = await api.get(url + `/${id}`);
+      //console.log("Category Api - FetchCategory");
+      return response.data;
+    }catch(error){
+      console.error(`Kategori ${id} çekilirken hata oluştu: `, error);
+      throw error;
+    }
   }
-
   
-  // Kullanıcı oluşturmak için POST isteği
+  // Kategori oluşturmak için POST isteği
   export const createCategory = async (category) => {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(category),
-    });
-    const data = await response.json();
-    return data;
+    try{
+      const response = await api.post(url, category);
+      //console.log("Category Api - CreateCategory");
+      return response.data;
+    }catch(error){
+      console.error('Kategori oluşturulurken hata oluştu: ', error);
+      throw error;
+    }
   };
   
-  // Kullanıcı güncellemek için PUT isteği
+  // Kategori güncellemek için PUT isteği
   export const updateCategory = async (id, updatedCategory) => {
-    const response = await fetch(url + `/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedCategory),
-    });
-    const data = await response.json();
-    return data;
+    try{
+      const response = await api.put(url + `/${id}`, updatedCategory);
+      //console.log("Category Api - UpdateCategory");
+      return response.data;
+    }catch(error){
+      console.error(`Kategori ${id} güncellenirken hata oluştu: `, error);
+      throw error;
+    }
   };
   
-  // Kullanıcı silmek için DELETE isteği
+  // Kategori silmek için DELETE isteği
   export const deleteCategory = async (id) => {
-    const response = await fetch(url + `/${id}`, {
-      method: 'DELETE',
-    });
-    return response.ok; // Silme işlemi başarılıysa true döner
+    try{
+      //console.log("Category Api - DeleteCategory");
+      const response = await api.delete(url + `/${id}`);
+      return response.status === 204; // Silme işlemi başarılıysa true döner
+    }catch(error){
+      console.error(`Kategori ${id} silinirken hata oluştu: `, error);
+      throw error;
+    }
   };

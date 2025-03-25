@@ -15,7 +15,8 @@ export const CategoryProvider = ({ children }) => {
     const getCategories = async () => {
       try {
         const data = await fetchCategories();
-        const userObjects = data.map( (category) => new Category(category.id, category.name, category.description));
+        //console.log("Category Data: ", data);
+        const userObjects = data.content.map( (category) => new Category(category.id, category.name, category.description));
         setCategories(userObjects);
       } catch (error) {
         console.error('Veri çekilemedi:', error);

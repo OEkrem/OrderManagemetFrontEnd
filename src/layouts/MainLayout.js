@@ -1,8 +1,8 @@
 import React from 'react';
-import Header from './Header';
-import Footer from './Footer';
-import { CategoryProvider } from '../../context/CategoryContext';
-import CategoryLinkList from '../../lists/CategoryLinkList';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import { CategoryProvider } from '../context/CategoryContext';
+import CategoryLinkList from '../lists/CategoryLinkList';
 
 export default function Layout({children}) {
   return (
