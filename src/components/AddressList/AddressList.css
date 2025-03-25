@@ -1,0 +1,77 @@
+
+
+.addressList-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-direction: column;
+}
+
+.addressItems{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 0px;
+}
+
+.addressItems .addressItem{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: left;
+    align-self: center;
+    padding: 5px 10px;
+    flex-direction: column;
+}
+
+.addressItemHead{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    margin: 0;
+    padding: 0;
+}
+
+.addressItemHead .addressYaziDiv{
+    width: 90%;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 10px;
+    transition: .3s;
+}
+
+.addressItemHead .addressButtonsDiv{
+    width: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    transition: .3s;
+}
+
+.addressItemDetails{
+    width: 100%;
+    padding: 0px 10px;
+    display: flex;
+    justify-content: left;
+    align-self: center;
+
+    transform: scaleY(0);
+    transition: 0.3s  ease-in-out;
+}
+
+.addressItemDetails.opened{
+    transform: scaleY(1);
+}
+
+.addressItemDetails p{
+    padding-left:  15px;
+}
+

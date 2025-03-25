@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { fetchUserByEmail, patchUser, updateUser } from "../api/userApi";
+import { createAddress } from "../api/addressApi";
 import MainLayout from '../layouts/MainLayout';
 import UserDetailsForm from '../components/UserDetailsForm/UserDetailsForm';
 import './UserDetailsPage.css'; // CSS dosyasını import edin
 import UserNotifications from '../components/UserNotificationSettings/UserNotifications';
 import { getUsernameFromToken } from '../context/AuthHook';
+import AddressForm from '../components/AddressForm/AddressForm';
+import AddressList from '../components/AddressList/AddressList';
 
 export default function UserDetailsPage() {
     const [user, setUser] = useState({});
@@ -61,6 +64,17 @@ export default function UserDetailsPage() {
         }
     };
 
+    const handleAddressSave = async (address) => {
+        try {
+            console.log("Address: ", address);
+            const updateAddressData = await createAddress(user.id, address);
+            //setUser(updatedUserData);
+            console.log("Address updated: ", user);
+        } catch (err) {
+            setError("Address verileri güncellenirken bir hata oluştu.");
+        }
+    };
+
     // Hata mesajı
     if (error) {
         return <div>{error}</div>;
@@ -73,14 +87,23 @@ export default function UserDetailsPage() {
 
     return (
         <MainLayout>
-            <div className='userDetailsPage-container'>
+            <div className='userDetailsPage-container container'>
                 <UserDetailsForm user={user} onSave={handleSaveUser} />
                 {error && <div style={{ color: 'red' }}>{error}</div>}
             </div>
-            <div className='userDetailsPage-container'>
+            <div className='userDetailsPage-container container'>
                 <UserNotifications user={user} onSave={handlePatchUser} />
                 {error && <div style={{ color: 'red' }}>{error}</div>}
             </div>
+
+            <div className='userDetailsPage-container container'>
+                <AddressList user={user}> </AddressList>
+            </div>
+
+            <div className='userDetailsPage-container container'>
+                <AddressForm onSave={handleAddressSave} />
+            </div>
+
         </MainLayout>
     );
 }
