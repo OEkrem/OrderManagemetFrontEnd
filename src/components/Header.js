@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import React, { useEffect } from 'react';
 import {logout} from '../api/authApi';
 import { useDispatch } from 'react-redux';
-import { removeToken } from '../store/authSlice';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Icons } from '../components/Icons/Icons';
 
 export default function Header() {
 
@@ -62,6 +63,7 @@ export default function Header() {
         <div className="d-flex">
           {isLogin ? (
             <>
+              <NavLink className="btn btn-primary d-flex justify-content-center align-items-center me-2" to="/orderdetails"> <FontAwesomeIcon icon={Icons.Basket} /> </NavLink>
               <NavLink className="btn btn-outline-primary me-2" to="/userdetails">
               <img src={'/image/url/user.png'} alt="User" width="40" height="40" className="rounded-circle me-2" />
               <span className="me-3">{'User'}</span>

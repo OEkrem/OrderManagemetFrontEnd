@@ -1,9 +1,10 @@
 
 import { 
-    faPenToSquare, 
-    faToggleOff, 
-    faToggleOn, 
-    faTrashCan
+  faBasketShopping,
+  faPenToSquare, 
+  faToggleOff, 
+  faToggleOn, 
+  faTrashCan
 } from "@fortawesome/free-solid-svg-icons";
 
 export const Icons = {
@@ -11,4 +12,5 @@ export const Icons = {
   ToggleOff: faToggleOff,
   ToggleOn: faToggleOn,
   Trash: faTrashCan,
+  Basket: faBasketShopping
 };
