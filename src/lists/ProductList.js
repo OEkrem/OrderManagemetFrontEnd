@@ -1,9 +1,10 @@
 import React from 'react';
 import { useProducts } from '../context/ProductContext';
+import Pagination from '../components/Pagination/Pagination';
 import './productlist.css';
 
 export default function ProductList() {
-  const { products } = useProducts();
+  const { products, page, setPage, totalPages } = useProducts();
 
   return (
     <div className="container my-4">
@@ -32,6 +33,7 @@ export default function ProductList() {
           <p>No product available.</p>
         )}
       </div>
+      <Pagination page={page} setPage={setPage} totalPages={totalPages} />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { CategoryProvider } from '../context/CategoryContext';
 import CategoryList from '../lists/CategoryList';
 
 export default function CategoryPage() {
+
   return (
     <div>
       <MainLayout>

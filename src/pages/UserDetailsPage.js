@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { fetchUserByEmail, patchUser, updateUser } from "../api/userApi";
 import { createAddress } from "../api/addressApi";
+
 import MainLayout from '../layouts/MainLayout';
+
 import UserDetailsForm from '../components/UserDetailsForm/UserDetailsForm';
-import './UserDetailsPage.css'; // CSS dosyasını import edin
 import UserNotifications from '../components/UserNotificationSettings/UserNotifications';
-import { getUsernameFromToken } from '../context/AuthHook';
+
 import AddressForm from '../components/AddressForm/AddressForm';
 import AddressList from '../components/AddressList/AddressList';
+
+import { getUsernameFromToken } from '../context/AuthHook';
+import './UserDetailsPage.css'; // CSS dosyasını import edin
 
 export default function UserDetailsPage() {
     const [user, setUser] = useState({});

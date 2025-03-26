@@ -4,9 +4,12 @@ import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchLogin } from '../api/authApi';
 import useAuth from '../context/AuthHook';
+import {useDispatch} from 'react-redux';
+import { saveToken } from '../store/authSlice';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   
   // Form verilerini state'de tutacağız
   const [email, setEmail] = useState('');
@@ -30,6 +33,7 @@ export default function LoginPage() {
       const response = await fetchLogin(loginRequest);
       
       if (response.token) {
+        //dispatch(saveToken(response.token));
         saveToken(response.token);
         setIsLogin(true);
         navigate("/");

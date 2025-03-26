@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { fetchAddressesByUserId, deleteAddress } from '../../api/addressApi';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faToggleOff, faToggleOn, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { Icons } from '../Icons/Icons';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './AddressList.css';
 
 const AddressList = ({ user }) => {
@@ -61,8 +61,8 @@ const AddressList = ({ user }) => {
                 <div className='addressYaziDiv'>
                     <button className="btn btn-info" onClick={() => toggleAddressDetails(address.id)}>
                         {expandedAddressId === address.id ? 
-                        <FontAwesomeIcon icon={faToggleOn} /> : 
-                        <FontAwesomeIcon icon={faToggleOff} />
+                        <FontAwesomeIcon icon={Icons.ToggleOn} /> : 
+                        <FontAwesomeIcon icon={Icons.ToggleOff} />
                         }
                     </button>
                     <div>
@@ -72,10 +72,10 @@ const AddressList = ({ user }) => {
               
               <div className='addressButtonsDiv'>
                     {/*<button className="btn btn-warning" onClick={() => handleUpdateAddres(address.id)}>
-                        <FontAwesomeIcon icon={faPenToSquare} />
+                        <FontAwesomeIcon icon={Icons.Edit} />
                     </button>*/}
                     <button className="btn btn-danger" onClick={() => handleDeleteAddress(address.id)}>
-                        {<FontAwesomeIcon icon={faTrashCan} />}
+                        <FontAwesomeIcon icon={Icons.Trash} />
                     </button>
               </div>
               

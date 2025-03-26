@@ -10,24 +10,26 @@ export const useProducts = () => {
 
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const data = await fetchProducts();
-        //console.log("Product Data: ", data);
-        const userObjects = data.content.map( (product) => new Product(product.id, product.name, product.category_id, product.description, product.price, product.image));
-        setProducts(userObjects);
+        const data = await fetchProducts(page, 9, null);
+        const productObjects = data.content.map((product) => new Product(product.id, product.name, product.category_id, product.description, product.price, product.image));
+        setProducts(productObjects);
+        setTotalPages(data.totalPages);
       } catch (error) {
         console.error('Veri çekilemedi:', error);
       }
     };
 
     getProducts();
-  }, []);
+  }, [page]);
 
   return (
-    <ProductContext.Provider value={{ products }}>
+    <ProductContext.Provider value={{ products, page, setPage, totalPages }}>
       {children}
     </ProductContext.Provider>
   );

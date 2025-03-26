@@ -3,14 +3,18 @@ import  useAuth  from '../context/AuthHook';
 import { useNavigate } from 'react-router-dom';
 import React, { useEffect } from 'react';
 import {logout} from '../api/authApi';
+import { useDispatch } from 'react-redux';
+import { removeToken } from '../store/authSlice';
 
 export default function Header() {
 
   const { isLogin, roles, removeToken } = useAuth();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogout = () => {
     logout();
+    //dispatch(removeToken());
     removeToken();
     navigate("/");
   };

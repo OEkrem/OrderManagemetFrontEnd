@@ -6,7 +6,6 @@ const url = '/categories';
   export const fetchCategories = async () => {
     try{
       const response = await api.get(url);
-      //console.log("CategoryApi - FetchCategories");
       return response.data;
     }catch(error){
       console.error('Kategoriler çekilirken hata oluştu: ', error);

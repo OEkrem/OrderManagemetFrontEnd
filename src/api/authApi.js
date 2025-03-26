@@ -29,7 +29,7 @@ export const logout = async () => {
 export const fetchRegister = async (registerRequest) => {
   try {
     const response = await api.post(url + '/register', registerRequest);
-    
+  
     if (response.status !== 201) throw new Error('Register unsuccessful');
     return response.data;
 
