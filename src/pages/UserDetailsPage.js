@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { patchUser } from "../api/userApi";
 import { getAddressesByUserId } from "../context/addressService";
 
 import MainLayout from '../layouts/MainLayout';
@@ -14,7 +13,7 @@ import './UserDetailsPage.css';
 import useAuth from '../context/AuthHook';
 
 export default function UserDetailsPage() {
-    const {user, setUser} = useAuth();
+    const {user} = useAuth();
     const [addresses, setAddresses] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

@@ -44,6 +44,7 @@ const useAuth = () => {
   };
 
   const saveToken = async (newToken) => {
+    localStorage.setItem("jwt_token", newToken);
     setToken(newToken);
     await setUserFromToken(newToken);
     setRoles(getRolesFromToken(newToken)); // bu çok faydalı bir yöntem değil xss saldırılarına açık

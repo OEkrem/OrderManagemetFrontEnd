@@ -1,0 +1,71 @@
+.order-detail-item-horizontal {
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-image{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.product-image img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-info {
+  margin-left: 15px;
+  flex-grow: 1;
+}
+
+.product-info h5 {
+  margin: 0;
+  font-size: 25px;
+  font-weight: bold;
+  color: #333;
+}
+
+.product-info p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.product-info p.fiyat {
+  margin: 5px 0;
+  font-size: 18px;
+  color: #555;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+}
+
+.quantity-control .quantity {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.delete-button button {
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  margin-left: 20px;
+  background-color: red;
+  border: none;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}

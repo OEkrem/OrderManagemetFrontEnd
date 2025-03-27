@@ -1,0 +1,32 @@
+
+
+.order-details-list {
+    margin-top: 20px;
+  }
+  
+  .order-details-list h3 {
+    text-align: center;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .order-details-list .card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .order-details-list .card-body {
+    padding: 15px;
+  }
+  
+  .order-details-list .card-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .order-details-list .card-text {
+    font-size: 14px;
+    color: #555;
+  }

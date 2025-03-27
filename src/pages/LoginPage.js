@@ -4,12 +4,9 @@ import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchLogin } from '../api/authApi';
 import useAuth from '../context/AuthHook';
-import {useDispatch} from 'react-redux';
-import { saveToken } from '../store/authSlice';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   
   // Form verilerini state'de tutacağız
   const [email, setEmail] = useState('');
@@ -17,7 +14,7 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { saveToken, setIsLogin } = useAuth();
+  const { saveToken} = useAuth();
 
    const handleSubmit = async (e) => {
      e.preventDefault(); // Formun sayfa yenilenmesini engeller
@@ -31,11 +28,8 @@ export default function LoginPage() {
 
      try {
       const response = await fetchLogin(loginRequest);
-      
       if (response.token) {
-        //dispatch(saveToken(response.token));
         saveToken(response.token);
-        setIsLogin(true);
         navigate("/");
       } else setError('Kullanici adi veya şifre yanliş');
       

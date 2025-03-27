@@ -3,19 +3,16 @@ import  useAuth  from '../context/AuthHook';
 import { useNavigate } from 'react-router-dom';
 import React, { useEffect } from 'react';
 import {logout} from '../api/authApi';
-import { useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Icons } from '../components/Icons/Icons';
 
 export default function Header() {
 
-  const { isLogin, roles, removeToken } = useAuth();
+  const { user, isLogin, roles, removeToken } = useAuth();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleLogout = () => {
     logout();
-    //dispatch(removeToken());
     removeToken();
     navigate("/");
   };
@@ -66,7 +63,7 @@ export default function Header() {
               <NavLink className="btn btn-primary d-flex justify-content-center align-items-center me-2" to="/orderdetails"> <FontAwesomeIcon icon={Icons.Basket} /> </NavLink>
               <NavLink className="btn btn-outline-primary me-2" to="/userdetails">
               <img src={'/image/url/user.png'} alt="User" width="40" height="40" className="rounded-circle me-2" />
-              <span className="me-3">{'User'}</span>
+              <span className="me-3">{user.username ? user.username : "User"}</span>
               </NavLink>
               <button className="btn btn-outline-danger" onClick={handleLogout}>Logout</button>
             </>

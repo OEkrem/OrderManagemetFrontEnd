@@ -26,8 +26,10 @@ export const fetchUserById = async (id) => {
 
 export const fetchUserByEmail = async (email) => {
   try {
-    const response = await api.get(url + `/email`, {params: { email }, withCredentials: true,});
-    return response.data;
+    if(email){
+      const response = await api.get(url + `/email`, {params: { email }, withCredentials: true,});
+      return response.data;
+    } else return null;
 
   } catch (error) {
     console.error("Error fetching users:", error);
