@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { fetchUserByEmail, patchUser, updateUser } from "../api/userApi";
-import { createAddress } from "../api/addressApi";
+import { patchUser } from "../api/userApi";
+import { getAddressesByUserId } from "../context/addressService";
 
 import MainLayout from '../layouts/MainLayout';
 
@@ -10,102 +10,57 @@ import UserNotifications from '../components/UserNotificationSettings/UserNotifi
 import AddressForm from '../components/AddressForm/AddressForm';
 import AddressList from '../components/AddressList/AddressList';
 
-import { getUsernameFromToken } from '../context/AuthHook';
-import './UserDetailsPage.css'; // CSS dosyasını import edin
+import './UserDetailsPage.css';
+import useAuth from '../context/AuthHook';
 
 export default function UserDetailsPage() {
-    const [user, setUser] = useState({});
-    const [username, setUsername] = useState("Unknown User");
+    const {user, setUser} = useAuth();
+    const [addresses, setAddresses] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const token = localStorage.getItem("jwt_token");
-
-        // Token geçerli mi kontrol et
-        if (token) {
-            const usernameFromToken = getUsernameFromToken(token);
-            setUsername(usernameFromToken);
-        }
-
-        // Kullanıcıları fetch et
-        const fetchData = async () => {
+        const fetchAddresses = async () => {
             try {
-                const usersData = await fetchUserByEmail(username);
-                setUser(usersData);
-                console.log("User data: ", usersData);
-            } catch (err) {
-                setError("Kullanıcı verileri alınırken bir hata oluştu.");
-            } finally {
-                setLoading(false);
-            }
+                if (user) {
+                    const addressesData = await getAddressesByUserId(user.id);
+                    setAddresses(addressesData);
+                }
+            } 
+            catch (err) {setError("Adresler alınırken bir hata oluştu.");} 
+            finally {setLoading(false);}
         };
-
-        if (username !== "Unknown User") {
-            fetchData();
-        }
-    }, [username]);
-
-    const handleSaveUser = async (updatedUser) => {
-        try {
-            console.log("Updated user: ", updatedUser);
-            const updatedUserData = await updateUser(user.id, updatedUser);
-            //setUser(updatedUserData);
-            console.log("User updated: ", user);
-        } catch (err) {
-            setError("Kullanıcı verileri güncellenirken bir hata oluştu.");
-        }
-    };
+    
+        fetchAddresses();
+    }, [user]);
 
     const handlePatchUser = async (patchedInformations) => {
         try {
-            console.log("Updated user: ", patchedInformations);
-            const patchedUser = await patchUser(user.id, patchedInformations);
-            //setUser(updatedUserData);
-            console.log("User updated: ", user);
+            await patchUser(user.id, patchedInformations);
         } catch (err) {
-            setError("Kullanıcı verileri güncellenirken bir hata oluştu.");
+            setError("Kullanici verileri güncellenirken bir hata oluştu.");
         }
     };
 
-    const handleAddressSave = async (address) => {
-        try {
-            console.log("Address: ", address);
-            const updateAddressData = await createAddress(user.id, address);
-            //setUser(updatedUserData);
-            console.log("Address updated: ", user);
-        } catch (err) {
-            setError("Address verileri güncellenirken bir hata oluştu.");
-        }
-    };
-
-    // Hata mesajı
-    if (error) {
-        return <div>{error}</div>;
-    }
-
-    // Yükleniyor mesajı
-    if (loading) {
-        return <div>Yükleniyor...</div>;
-    }
+    if (error) {return <div>{error}</div>;}
+    if (loading) {return <div>Yükleniyor... </div>;}
+    if(!user) {return  <div>User Yükleniyor... </div>;}
 
     return (
         <MainLayout>
             <div className='userDetailsPage-container container'>
-                <UserDetailsForm user={user} onSave={handleSaveUser} />
-                {error && <div style={{ color: 'red' }}>{error}</div>}
+                <UserDetailsForm user={user} setUser={setUser} />
             </div>
             <div className='userDetailsPage-container container'>
                 <UserNotifications user={user} onSave={handlePatchUser} />
-                {error && <div style={{ color: 'red' }}>{error}</div>}
             </div>
 
             <div className='userDetailsPage-container container'>
-                <AddressList user={user}> </AddressList>
+                <AddressList addresses = {addresses} setAddresses={setAddresses} />
             </div>
 
             <div className='userDetailsPage-container container'>
-                <AddressForm onSave={handleAddressSave} />
+                <AddressForm userId = {user.id} setAddresses={setAddresses} />
             </div>
 
         </MainLayout>

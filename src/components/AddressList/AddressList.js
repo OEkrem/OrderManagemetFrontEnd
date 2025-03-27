@@ -1,32 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { fetchAddressesByUserId, deleteAddress } from '../../api/addressApi';
+import React, { useState } from 'react';
+import { deleteAddress } from '../../api/addressApi';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Icons } from '../Icons/Icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AddressList.css';
 
-const AddressList = ({ user }) => {
-  const [addresses, setAddresses] = useState([]);
-  const [loading, setLoading] = useState(true);
+const AddressList = ({ addresses, setAddresses }) => {
   const [error, setError] = useState(null);
   const [expandedAddressId, setExpandedAddressId] = useState(null);
-
-  useEffect(() => {
-    const fetchAddresses = async () => {
-      try {
-        const addressesData = await fetchAddressesByUserId(user.id);
-        setAddresses(addressesData);
-        setLoading(false);
-      } catch (err) {
-        setError("Adres verileri alınırken bir hata oluştu.");
-        setLoading(false);
-      }
-    };
-
-    if (user && user.id) {
-      fetchAddresses();
-    }
-  }, [user]);
 
   const toggleAddressDetails = (addressId) => {
     setExpandedAddressId(expandedAddressId === addressId ? null : addressId);
@@ -37,18 +18,16 @@ const AddressList = ({ user }) => {
   };
 
   const handleDeleteAddress = async (addressId) => {
-    console.log('Silme yapilacak address id:', addressId);
-    try{await deleteAddress(addressId);}
-    catch(error){console.error('Error deleting address: ', error);}
+    try{
+      await deleteAddress(addressId);
+      const updatedAddresses = addresses.filter((address) => address.id !== addressId);
+      setAddresses(updatedAddresses);
+    }
+    catch(error){setError(error);}
   };
 
-  if (loading) {
-    return <div>Yükleniyor...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (!addresses || addresses.length === 0) {return <div>Kayıtlı herhangi bir adres bulunamadı.</div>;}
+  if (error) {return <div>{error}</div>;}
 
   return (
     <div className='addressList-container'>
@@ -71,9 +50,9 @@ const AddressList = ({ user }) => {
                 </div>
               
               <div className='addressButtonsDiv'>
-                    {/*<button className="btn btn-warning" onClick={() => handleUpdateAddres(address.id)}>
+                    <button className="btn btn-warning" onClick={() => handleUpdateAddres(address.id)}>
                         <FontAwesomeIcon icon={Icons.Edit} />
-                    </button>*/}
+                    </button>
                     <button className="btn btn-danger" onClick={() => handleDeleteAddress(address.id)}>
                         <FontAwesomeIcon icon={Icons.Trash} />
                     </button>

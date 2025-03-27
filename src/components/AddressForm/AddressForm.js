@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { createAddress } from "../../api/addressApi";
 
-const AddressForm = ({ onSave }) => {
+const AddressForm = ({ userId, setAddresses }) => {
+  const [error, setError] = useState();
   const [showForm, setShowForm] = useState(false);
   const [address, setAddress] = useState({
     name: "",
@@ -10,8 +12,7 @@ const AddressForm = ({ onSave }) => {
     buildingNumber: "",
     street: "",
     city: "",
-    country: "",
-    userId: "",
+    country: ""
   });
 
   const toggleForm = () => setShowForm(!showForm);
@@ -20,9 +21,17 @@ const AddressForm = ({ onSave }) => {
     setAddress({ ...address, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(address);
+
+    try{
+      const addressWithUserId = { ...address, userId: userId };
+      const createdAddress = await createAddress(addressWithUserId);
+      setAddresses((prevAddresses) => [...prevAddresses, createdAddress]);
+    } catch(error){
+      setError(error);
+    }
+
     setShowForm(false);
     setAddress({
       name: "",
@@ -31,8 +40,7 @@ const AddressForm = ({ onSave }) => {
       buildingNumber: "",
       street: "",
       city: "",
-      country: "",
-      userId: "",
+      country: ""
     });
   };
 
@@ -63,6 +71,7 @@ const AddressForm = ({ onSave }) => {
           </form>
         </div>
       )}
+      {error && <div style={{ color: 'red' }}>{error}</div>}
     </div>
   );
 };

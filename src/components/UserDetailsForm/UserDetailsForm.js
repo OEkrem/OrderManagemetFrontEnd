@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react'; 
 import './UserDetailsForm.css';
+import { updateUser } from '../../api/userApi';
 
-const UserDetailsForm = ({ user, onSave }) => {
+const UserDetailsForm = ({ user, setUser }) => {
+
+    const [info, setInfo] = useState();
+    const [error, setError] = useState();
+
     const [formData, setFormData] = useState({
         username: user.username || '',
         firstName: user.firstName || '',
@@ -25,16 +30,22 @@ const UserDetailsForm = ({ user, onSave }) => {
     }, [user]);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: name === 'roles' ? value.split(',').map(role => role.trim()) : value // Handle roles as array
-        });
+        const { name, value } = e.target; // Değişen input'un name ve value değerlerini al
+        setFormData((prevFormData) => ({
+            ...prevFormData, // Önceki form verilerini koru
+            [name]: value,   // Değişen alanı güncelle
+        }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        onSave(formData);
+        try{
+            const updatedUser = await updateUser(user.id, formData);
+            setInfo("Kullanıcı başarıyla güncellendi.");
+            //setUser(updatedUser);
+        } catch (error){
+            setError("Kullanıcı Bilgileri Kaydedilemedi..");
+        }
     };
 
     return (
@@ -71,7 +82,8 @@ const UserDetailsForm = ({ user, onSave }) => {
             <span>
                 <button type="submit">Kaydet</button> 
             </span>
-            
+            {error && <div style={{ color: 'red' }}>{error}</div>}
+            {info && <div style={{ color: 'green' }}>{info}</div>}
         </form>
     );
 };
