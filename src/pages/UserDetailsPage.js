@@ -34,14 +34,6 @@ export default function UserDetailsPage() {
         fetchAddresses();
     }, [user]);
 
-    const handlePatchUser = async (patchedInformations) => {
-        try {
-            await patchUser(user.id, patchedInformations);
-        } catch (err) {
-            setError("Kullanici verileri güncellenirken bir hata oluştu.");
-        }
-    };
-
     if (error) {return <div>{error}</div>;}
     if (loading) {return <div>Yükleniyor... </div>;}
     if(!user) {return  <div>User Yükleniyor... </div>;}
@@ -49,10 +41,10 @@ export default function UserDetailsPage() {
     return (
         <MainLayout>
             <div className='userDetailsPage-container container'>
-                <UserDetailsForm user={user} setUser={setUser} />
+                <UserDetailsForm user={user} />
             </div>
             <div className='userDetailsPage-container container'>
-                <UserNotifications user={user} onSave={handlePatchUser} />
+                <UserNotifications user={user} />
             </div>
 
             <div className='userDetailsPage-container container'>

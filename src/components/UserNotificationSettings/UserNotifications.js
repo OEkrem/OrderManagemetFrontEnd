@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState } from 'react'; 
 import './UserNotifications.css';
 
-const UserNotifications = ({ user, onSave }) => {
+const UserNotifications = ({ user }) => {
     const [formData, setFormData] = useState({
         notification_sms: user.notification_sms || false,
-        notofications_email: user.notofications_email || false
+        notification_email: user.notofications_email || false
     });
 
     const handleChange = (e) => {
@@ -16,7 +16,10 @@ const UserNotifications = ({ user, onSave }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSave(formData);
+
+        // buraya notification işlemlerini güncellemek için gerekli userApi üzerinden patch metodu çağırılacak
+        console.log("UserNotificationSettings - Güncelleme işlemi daha tammalanmadı.");
+        // await patchUser(user.id, formData);
     };
 
     return (

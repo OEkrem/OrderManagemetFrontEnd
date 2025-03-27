@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './UserDetailsForm.css';
 import { updateUser } from '../../api/userApi';
 
-const UserDetailsForm = ({ user, setUser }) => {
+const UserDetailsForm = ({ user }) => {
 
     const [info, setInfo] = useState();
     const [error, setError] = useState();
@@ -30,10 +30,10 @@ const UserDetailsForm = ({ user, setUser }) => {
     }, [user]);
 
     const handleChange = (e) => {
-        const { name, value } = e.target; // Değişen input'un name ve value değerlerini al
+        const { name, value } = e.target;
         setFormData((prevFormData) => ({
-            ...prevFormData, // Önceki form verilerini koru
-            [name]: value,   // Değişen alanı güncelle
+            ...prevFormData,
+            [name]: value,
         }));
     };
 
@@ -42,7 +42,7 @@ const UserDetailsForm = ({ user, setUser }) => {
         try{
             const updatedUser = await updateUser(user.id, formData);
             setInfo("Kullanıcı başarıyla güncellendi.");
-            //setUser(updatedUser);
+            //setUser(updatedUser); // setUser gelen verilerden kaldırıldı gerke olmayınca
         } catch (error){
             setError("Kullanıcı Bilgileri Kaydedilemedi..");
         }
