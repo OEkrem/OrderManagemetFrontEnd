@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { refreshTokenRequest } from './authApi';
+import { isExpired } from '../context/authUtils';
 
 const api = axios.create({
   baseURL: 'http://localhost:8090/api/v1',
@@ -53,12 +54,5 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-const isExpired = (token) => {
-  if (!token) return true;
-  const payload = JSON.parse(atob(token.split('.')[1]));
-  const currentTime = Math.floor(Date.now() / 1000); 
-  return payload.exp < currentTime;
-};
 
 export default api;

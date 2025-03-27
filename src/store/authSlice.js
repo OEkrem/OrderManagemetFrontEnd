@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchUserByEmail } from '../api/userApi';
-import { getUsernameFromToken } from '../context/AuthHook';
+import { getUsernameFromToken } from '../context/authUtils';
 
 const initialState = {
   token: null,
