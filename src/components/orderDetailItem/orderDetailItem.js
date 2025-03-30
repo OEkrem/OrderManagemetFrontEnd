@@ -41,8 +41,11 @@ const OrderDetailItem = ({ orderDetailItem, onQuantityChange, handleDeleteOrderD
       {/* Ürün Görseli */}
       <div className="product-image">
         <img
-          src={product?.image || 'https://via.placeholder.com/100'}
+          src={product?.image || '/image/url/defaultProduct.png'}
           alt={product?.name || 'Ürün Görseli'}
+          onError={(e) => {
+            e.target.src = '/image/url/defaultProduct.png';
+          }}
         />
       </div>
 

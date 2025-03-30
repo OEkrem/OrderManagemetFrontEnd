@@ -10,8 +10,18 @@ import UserPage from './pages/UserPage';
 import UserDetailsPage from './pages/UserDetailsPage';
 import OrderDetailsPage from './pages/OrderDetailsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { refreshToken } from './store/features/auth/authSlice';
 
 function App() {
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Uygulama yüklendiğinde (F5 atıldığında) refresh token ile yeni access token al
+    dispatch(refreshToken());
+  }, [dispatch]);
 
   return (
 
@@ -28,7 +38,6 @@ function App() {
           <Route path="/404" element={<NotFoundPage />} />
         </Routes>
       </Router>  
-
     
   );
 }

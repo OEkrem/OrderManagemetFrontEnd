@@ -1,16 +1,16 @@
-
-/*
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchUserByEmail } from '../api/userApi';
-import { getUsernameFromToken } from '../context/authUtils';
+import { refreshTokenRequest } from '../../../api/authApi'; 
+import { fetchUserByEmail } from '../../../api/userApi';
+import { getUsernameFromToken } from '../../../context/authUtils';
 
 const initialState = {
-  token: null,
+  token: null, // Access token sadece burada saklanacak
   isLogin: false,
   roles: [],
   user: {},
 };
 
+// Token'dan kullanıcı bilgilerini almak için async thunk
 export const setUserFromToken = createAsyncThunk(
   'auth/setUserFromToken',
   async (token, { rejectWithValue }) => {
@@ -24,15 +24,13 @@ export const setUserFromToken = createAsyncThunk(
   }
 );
 
-export const saveTokenAndFetchUser = createAsyncThunk(
-  'auth/saveTokenAndFetchUser',
-  async (token, { dispatch, rejectWithValue }) => {
+// Refresh token ile yeni access token almak için async thunk
+export const refreshToken = createAsyncThunk(
+  'auth/refreshToken',
+  async (_, { rejectWithValue }) => {
     try {
-      localStorage.setItem('jwt_token', token);
-      const username = getUsernameFromToken(token);
-      const userData = await fetchUserByEmail(username);
-      dispatch(saveToken(token));
-      return userData;
+      const response = await refreshTokenRequest(); // Yeni access token al
+      return response.data.token; // Yeni token'ı döndür
     } catch (err) {
       return rejectWithValue(err.response.data);
     }
@@ -45,13 +43,11 @@ const authSlice = createSlice({
   reducers: {
     saveToken: (state, action) => {
       const token = action.payload;
-      localStorage.setItem('jwt_token', token);
       state.token = token;
       state.roles = getRolesFromToken(token);
       state.isLogin = true;
     },
     removeToken: (state) => {
-      localStorage.clear();
       state.token = null;
       state.isLogin = false;
       state.user = null;
@@ -63,8 +59,12 @@ const authSlice = createSlice({
       .addCase(setUserFromToken.fulfilled, (state, action) => {
         state.user = action.payload;
       })
-      .addCase(saveTokenAndFetchUser.fulfilled, (state, action) => {
-        state.user = action.payload;
+      .addCase(refreshToken.fulfilled, (state, action) => {
+        state.token = action.payload; // Yeni access token'ı güncelle
+      })
+      .addCase(refreshToken.rejected, (state) => {
+        state.token = null;
+        state.isLogin = false;
       });
   },
 });
@@ -77,4 +77,3 @@ const getRolesFromToken = (token) => {
 
 export const { saveToken, removeToken } = authSlice.actions;
 export default authSlice.reducer;
-*/

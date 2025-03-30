@@ -34,12 +34,10 @@ const useAuth = () => {
   }, []);
 
   const updateAuthState = async (newToken) => {
-    console.log("Update Authhook State çalisiyor...");
     saveToken(newToken);
   };
 
   const clearAuthState = () => {
-    console.log("Clear AuthHookState çalisiyor..");
     removeToken();
   };
 

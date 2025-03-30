@@ -3,7 +3,7 @@ import { useProducts } from '../context/ProductContext';
 import Pagination from '../components/Pagination/Pagination';
 import './productlist.css';
 
-export default function ProductList() {
+export default function ProductList({handleAddToCard}) {
   const { products, page, setPage, totalPages } = useProducts();
 
   return (
@@ -24,7 +24,7 @@ export default function ProductList() {
                   <p className="card-text fw-bold">{product.price} TL</p>
                 </div>
                 <div className="card-footer bg-white border-0 text-center">
-                  <button className="btn btn-primary w-100">Add to Cart</button>
+                  <button className="btn btn-primary w-100" onClick={() => handleAddToCard(product)}>Add to Cart</button>
                 </div>
               </div>
             </div>

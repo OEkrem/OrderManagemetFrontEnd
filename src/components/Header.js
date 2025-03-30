@@ -1,15 +1,40 @@
 import { NavLink } from 'react-router-dom';
 import  useAuth  from '../context/AuthHook';
 import { useNavigate } from 'react-router-dom';
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {logout} from '../api/authApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Icons } from '../components/Icons/Icons';
+import './header.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchOrder } from '../store/features/order/orderSlice';
 
 export default function Header() {
 
-  const { user, isLogin, roles, removeToken } = useAuth();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user, isLogin, roles, removeToken } = useAuth();
+  const { order } = useSelector ( (state) => state.order);
+  const [basketLenght, setBasketLength] = useState();
+
+  useEffect(() => {
+    if(user?.id)
+        dispatch(fetchOrder(user.id));
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if(user?.id)
+      dispatch(fetchOrder(user.id));
+  }, [dispatch, user, order?.orderDetails]);
+
+  useEffect(() => {
+    if (order?.orderDetailResponses) {
+      const totalQuantity = order.orderDetailResponses.reduce(
+        (total, item) => total + item.quantity, 0
+      );
+      setBasketLength(totalQuantity);
+    }
+  }, [order?.orderDetailResponses]);
 
   const handleLogout = () => {
     logout();
@@ -60,7 +85,12 @@ export default function Header() {
         <div className="d-flex">
           {isLogin ? (
             <>
-              <NavLink className="btn btn-primary d-flex justify-content-center align-items-center me-2" to="/orderdetails"> <FontAwesomeIcon icon={Icons.Basket} /> </NavLink>
+              <NavLink className="basket btn btn-primary d-flex justify-content-center align-items-center me-2" to="/orderdetails"> <FontAwesomeIcon icon={Icons.Basket} />
+              { basketLenght ? (
+                <div className='orderDetailsLength'>{basketLenght}</div>
+              ) : null}
+
+              </NavLink>
               <NavLink className="btn btn-outline-primary me-2" to="/userdetails">
               <img src={'/image/url/user.png'} alt="User" width="40" height="40" className="rounded-circle me-2" />
               <span className="me-3">{user.username ? user.username : "User"}</span>

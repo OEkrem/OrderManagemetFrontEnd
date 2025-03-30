@@ -4,50 +4,52 @@ import React, {useState, useEffect} from 'react';
 import MainLayout from '../layouts/MainLayout';
 import OrderDetailsList from '../components/orderDetailsList/orderDetailsList';
 import useAuth from '../context/AuthHook';
-import { fetchOrders } from '../api/orderApi';
-import { OrderStatus } from '../models/orderStatus';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchOrder, removeFromOrderDetails } from '../store/features/order/orderSlice';
+import { deleteOrderDetails } from '../api/orderDetailsApi';
 
 export default function OrderDetailsPage() {
 
+  const dispatch = useDispatch();
   const {user} = useAuth();
-  const [orderDetails, setOrderDetails] = useState([]);
+  const { order } = useSelector( (state) => state.order);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchUserOrders = async () => {
+    const fetchData = async () => {
       try {
         if (user?.id) {
-          const orders = await fetchOrders(0, 10, user.id, OrderStatus.PENDING);
-          if(orders.content.length !== 0)
-            setOrderDetails(orders?.content[0].orderDetailResponses || []);
+          await dispatch(fetchOrder(user.id)).unwrap();
         }
       } catch (err) {
-        console.error(err);
-        setError('Sepetinizdeki ürünler alınırken bir hata oluştu.');
+        setError('Veriler alınırken bir hata oluştu.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserOrders();
-  }, [user]);
+    fetchData();
+  }, [dispatch, user]);
 
   const handleQuantityChange = (id, newQuantity) => {
-    setOrderDetails((prevDetails) =>
+    console.log("id: ", id, " NewQuantity: ", newQuantity);
+    /*setOrderDetails((prevDetails) =>
       prevDetails.map((item) =>
         item.id === id ? { ...item, quantity: newQuantity } : item
       )
-    );
+    );*/
   };
 
-  const handleDeleteOrderDetailItem = (id) => {
+  const handleDeleteOrderDetailItem = async (orderDetailId) => {
     try{
-
+        console.log("Will delete orderDetail with id: ", orderDetailId);
+        await deleteOrderDetails(orderDetailId);
+        dispatch(removeFromOrderDetails(orderDetailId));
+        window.location.reload();
     }catch (error){
       setError("Sepetinizden ürün silerken bir hata ile karşılaştım.");
     }
-    setOrderDetails((prevDetails) => prevDetails.filter((item) => item.id !== id));
   };
 
   if (loading) {return (<MainLayout><div>Yükleniyor...</div></MainLayout>);}
@@ -59,7 +61,7 @@ export default function OrderDetailsPage() {
       </MainLayout>
   );}
 
-  if (orderDetails.length === 0) {
+  if (order?.orderDetailResponses?.length === 0) {
     return (
       <MainLayout>
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
@@ -72,8 +74,8 @@ export default function OrderDetailsPage() {
   return (
     <div>
       <MainLayout>
-        <OrderDetailsList 
-        orderDetails={orderDetails}
+        <OrderDetailsList
+        orderDetails={order?.orderDetailResponses || []}
         onQuantityChange={handleQuantityChange}
         handleDeleteOrderDetailItem={handleDeleteOrderDetailItem}
          />
