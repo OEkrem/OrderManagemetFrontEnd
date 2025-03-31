@@ -5,7 +5,6 @@ import { CategoryProvider } from '../context/CategoryContext';
 import CategoryList from '../lists/CategoryList';
 import { ProductProvider } from '../context/ProductContext';
 import ProductList from '../lists/ProductList';
-import useAuth from '../context/AuthHook';
 import { QuantityType } from '../models/enums/quantityType';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToOrderDetails, fetchOrder } from '../store/features/order/orderSlice';
@@ -13,12 +12,11 @@ import { addOrderDetail } from '../api/orderApi';
 
 export default function Home() {
 
-  const {user} = useAuth();
-
   const dispatch = useDispatch();
-  const {order, orderDetails, error} = useSelector( (state) => state.order);
-  const [willAddOrderDetail, setWillAddOrderDetail] = useState(null); // Yeni state
+  const {order} = useSelector( (state) => state.order);
+  const [willAddOrderDetail, setWillAddOrderDetail] = useState(null);
 
+  const { user } = useSelector( (state) => state.auth);
 
   useEffect(() => {
     if(user?.id)
@@ -30,11 +28,7 @@ export default function Home() {
     const saveToDatabase = async () => {
       if (willAddOrderDetail) {
         try {
-          const veri = await addOrderDetail(order?.id, willAddOrderDetail);
-          if(veri === null)
-            console.log("Ürün ekleme başarısız..");
-          else
-            console.log("Ürün ekleme başarılı..");
+          await addOrderDetail(order?.id, willAddOrderDetail);
 
           setWillAddOrderDetail(null);
         } catch (error) {
@@ -44,11 +38,11 @@ export default function Home() {
     };
 
     saveToDatabase();
-  }, [willAddOrderDetail]);
+  }, [order?.id, willAddOrderDetail]);
 
   const handleAddToBasket = (product) => {
     try{
-      const newOrderDetail = {id: null, productId: product.id, quantityType: QuantityType.BOX, quantity: 1, price: product.price, };
+      const newOrderDetail = {id: null, productId: product?.id, quantityType: QuantityType.BOX, quantity: 1, price: product.price, };
       dispatch(addToOrderDetails(newOrderDetail));
       setWillAddOrderDetail(newOrderDetail);
       window.location.reload();

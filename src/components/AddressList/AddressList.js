@@ -26,7 +26,7 @@ const AddressList = ({ addresses, setAddresses }) => {
     catch(error){setError(error);}
   };
 
-  if (!addresses || addresses.length === 0) {return <div>Kayıtlı herhangi bir adres bulunamadı.</div>;}
+  if (!Array.isArray(addresses) || addresses.length === 0) {return <div>Kayıtlı herhangi bir adres bulunamadı.</div>;}
   if (error) {return <div>{error}</div>;}
 
   return (

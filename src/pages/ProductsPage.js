@@ -2,11 +2,11 @@ import React from 'react';
 import MainLayout from '../layouts/MainLayout';
 import { ProductProvider } from '../context/ProductContext';
 import ProductList from '../lists/ProductList';
-import useAuth from '../context/AuthHook';
 import CreateProductForm from '../components/CreateProductForm/CreateProductForm';
+import { useSelector } from 'react-redux';
 
 export default function ProductsPage() {
-  const data = useAuth();
+  const {roles} = useSelector( (state) => state.auth);
   return (
       <MainLayout>
         <ProductProvider>
@@ -17,7 +17,7 @@ export default function ProductsPage() {
 
         {/*<ProductList2 selectedCategory={1}/>*/}
 
-        {data.roles.includes("ROLE_ADMIN") ? 
+        {roles.includes("ROLE_ADMIN") ? 
         <>
           <CreateProductForm/>
         </>

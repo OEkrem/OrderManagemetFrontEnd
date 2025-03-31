@@ -3,33 +3,30 @@ import MainLayout from '../layouts/MainLayout';
 import {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchLogin } from '../api/authApi';
-import useAuth from '../context/AuthHook';
+import { useDispatch } from 'react-redux';
+import { saveToken, fetchUser } from '../store/features/auth/authSlice';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   
-  // Form verilerini state'de tutacağız
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { saveToken} = useAuth();
-
    const handleSubmit = async (e) => {
-     e.preventDefault(); // Formun sayfa yenilenmesini engeller
+     e.preventDefault();
      setLoading(true);
      setError('');
      
-     const loginRequest = {
-       email,
-       password
-     };
+     const loginRequest = {email,password};
 
      try {
       const response = await fetchLogin(loginRequest);
-      if (response.token) {
-        saveToken(response.token);
+      if (response?.token) {
+        dispatch(saveToken(response.token));
+        await dispatch(fetchUser()).unwrap();
         navigate("/");
       } else setError('Kullanici adi veya şifre yanliş');
       
@@ -38,6 +35,14 @@ export default function LoginPage() {
     }
     setLoading(false);
   };
+
+  if (loading) {return (<MainLayout><div>Yükleniyor...</div></MainLayout>);}
+  if (error) {
+      return (
+        <MainLayout>
+          <div style={{ color: 'red', textAlign: 'center', marginTop: '20px' }}>{error} </div>
+        </MainLayout>
+    );}
 
   return (
     <div>

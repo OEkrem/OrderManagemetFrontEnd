@@ -19,21 +19,21 @@ const initialState = {
 // API'den sipariş bilgisi çekmek için async thunk
 export const fetchOrder = createAsyncThunk(
     'order/fetchOrder',
-    async (userId, { getState, rejectWithValue }) => {
+    async (_, { getState, rejectWithValue }) => {
       try {
         // Redux store'dan authSlice'daki user bilgisini al
         const state = getState();
         const user = state.auth.user;
   
         if (!user || !user.id) {
-          //throw new Error('Kullanıcı bilgisi bulunamadı.');
+          throw new Error('Kullanıcı bilgisi bulunamadı.');
         }
   
-        var response = await fetchOrders(0, 1, userId, OrderStatus.PENDING);
+        var response = await fetchOrders(0, 1, user.id, OrderStatus.PENDING);
         //console.log("Response.content[0]: ", response.content[0]);
         if(response?.content?.length === 0){
-          await createOrder({userId: userId});  // belki kanka dönen değer direk responsa atanabilir
-          response = await fetchOrders(0, 1, userId, OrderStatus.PENDING);
+          await createOrder({userId: user.id});  // belki kanka dönen değer direk responsa atanabilir
+          response = await fetchOrders(0, 1, user.id, OrderStatus.PENDING);
         }
         return response.content[0];
       } catch (err) {

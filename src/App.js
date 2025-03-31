@@ -10,18 +10,29 @@ import UserPage from './pages/UserPage';
 import UserDetailsPage from './pages/UserDetailsPage';
 import OrderDetailsPage from './pages/OrderDetailsPage';
 import NotFoundPage from './pages/NotFoundPage';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { refreshToken } from './store/features/auth/authSlice';
+import { fetchUser, refreshToken } from './store/features/auth/authSlice';
 
 function App() {
 
   const dispatch = useDispatch();
+  const {user} = useSelector( (state)=> state.auth);
 
   useEffect(() => {
-    // Uygulama yüklendiğinde (F5 atıldığında) refresh token ile yeni access token al
-    dispatch(refreshToken());
-  }, [dispatch]);
+    const initializeApp = async () => {
+      try {
+        if(!user){
+          await dispatch(refreshToken()).unwrap();
+          await dispatch(fetchUser()).unwrap();  
+        }
+      } catch (error) {
+        console.error("Uygulama başlatılırken bir hata oluştu:", error);
+      }
+    };
+  
+    initializeApp();
+  }, [dispatch, user]);
 
   return (
 

@@ -10,10 +10,10 @@ import AddressForm from '../components/AddressForm/AddressForm';
 import AddressList from '../components/AddressList/AddressList';
 
 import './UserDetailsPage.css';
-import useAuth from '../context/AuthHook';
+import { useSelector } from 'react-redux';
 
 export default function UserDetailsPage() {
-    const {user} = useAuth();
+    const { user } = useSelector( (state) => state.auth);
     const [addresses, setAddresses] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

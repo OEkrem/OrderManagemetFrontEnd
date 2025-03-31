@@ -7,32 +7,40 @@ const initialState = {
   token: null, // Access token sadece burada saklanacak
   isLogin: false,
   roles: [],
-  user: {},
+  user: null,
 };
 
-// Token'dan kullanıcı bilgilerini almak için async thunk
-export const setUserFromToken = createAsyncThunk(
-  'auth/setUserFromToken',
-  async (token, { rejectWithValue }) => {
+export const fetchUser = createAsyncThunk(
+  'auth/fetchUser',
+  async (_, { getState, rejectWithValue }) => {
     try {
+      const state = getState();
+      const token = state.auth.token;
+      
+      if(!token)
+        return rejectWithValue("Token bulunamadı.");
+
       const username = getUsernameFromToken(token);
-      const userData = await fetchUserByEmail(username);
-      return userData;
+      if(!username)
+        return rejectWithValue("Kullanıcı adı bulunamadı.");
+
+      const user = await fetchUserByEmail(username);
+      return user;
+
     } catch (err) {
       return rejectWithValue(err.response.data);
     }
   }
 );
 
-// Refresh token ile yeni access token almak için async thunk
 export const refreshToken = createAsyncThunk(
   'auth/refreshToken',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await refreshTokenRequest(); // Yeni access token al
-      return response.data.token; // Yeni token'ı döndür
+      const response = await refreshTokenRequest();
+      return response?.data?.token;
     } catch (err) {
-      return rejectWithValue(err.response.data);
+      return rejectWithValue(err.response?.data || err);
     }
   }
 );
@@ -56,15 +64,19 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(setUserFromToken.fulfilled, (state, action) => {
+      .addCase(fetchUser.fulfilled, (state, action) => {
         state.user = action.payload;
+        state.isLogin = true;
+        state.roles = getRolesFromToken(state.token);
       })
       .addCase(refreshToken.fulfilled, (state, action) => {
-        state.token = action.payload; // Yeni access token'ı güncelle
+        state.token = action.payload;
       })
       .addCase(refreshToken.rejected, (state) => {
         state.token = null;
         state.isLogin = false;
+        state.user = null;
+        state.roles = [];
       });
   },
 });

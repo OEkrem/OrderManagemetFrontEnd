@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { refreshTokenRequest } from './authApi';
 import { isExpired } from '../context/authUtils';
+import store from '../store/store';
+import { saveToken, removeToken, refreshToken } from '../store/features/auth/authSlice';
 
 const api = axios.create({
   baseURL: 'http://localhost:8090/api/v1',
@@ -8,21 +9,49 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' }
 });
 
+let isRefreshing = false;
+let refreshSubscribers = [];
+
+const onRrefreshed = (token) => {
+  refreshSubscribers.map((callback) => callback(token));
+};
+
+const addRefreshSubscriber = (callback) => {
+  refreshSubscribers.push(callback);
+};
+
 api.interceptors.request.use(
   async (config) => {
-    let token = localStorage.getItem('jwt_token');
+    const state = store.getState(); // Redux state'ine erişim
+    let token = state.auth.token;
+
     if (token && isExpired(token)) {
-      try {
-        const res = await refreshTokenRequest();
-        token = res.data.token;
-        localStorage.setItem("jwt_token", token);
-        console.log("Access token refreshed - api.Request");
-      } catch (refreshError) {
-        console.error("Refresh token expired or invalid");
-        localStorage.clear();
-        return Promise.reject(refreshError);
+      if(!isRefreshing){
+        isRefreshing = true;
+        try {
+          const refreshResponse = await store.dispatch(refreshToken()).unwrap();
+          token = refreshResponse;
+
+          store.dispatch(saveToken(token));
+          isRefreshing = false;
+          onRrefreshed(token);
+
+        } catch (refreshError) {
+          console.error("Refresh error..");
+          isRefreshing = false;
+          store.dispatch(removeToken());
+          return Promise.reject(refreshError);
+        }
       }
+
+      return new Promise((resolve) => {
+        addRefreshSubscriber((newToken) => {
+          config.headers["Authorization"] = `Bearer ${newToken}`;
+          resolve(config);
+        });
+      });
     }
+
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
@@ -34,23 +63,28 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
+    /*const originalRequest = error.config;
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const res = await refreshTokenRequest();
-        const newAccessToken = res.data.token;
-        localStorage.setItem("jwt_token", newAccessToken);
+        const refreshResponse = await store.dispatch(refreshToken()).unwrap();
+        const newAccessToken = refreshResponse;
+
+        store.dispatch(saveToken(newAccessToken));
+
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-        console.log("Access token refreshed - api.Response");
         return api(originalRequest);
       } catch (refreshError) {
         console.error("Refresh token expired or invalid");
-        localStorage.clear();
+        store.dispatch(removeToken());
         window.location.href = "/login";
         return Promise.reject(refreshError);
       }
-    }
+    }*/
+      if (error.response?.status === 401) {
+        console.log("401 hatası.. remove");
+        store.dispatch(removeToken());
+      }
     return Promise.reject(error);
   }
 );

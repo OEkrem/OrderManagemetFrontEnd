@@ -1,7 +1,7 @@
 
 export function getUsernameFromToken(token) {
   try {
-    if (!token) return "Unknown User";
+    if (!token) return '';
 
     const parts = token.split('.');
     if (parts.length !== 3) {
@@ -15,7 +15,7 @@ export function getUsernameFromToken(token) {
     return parsedPayload.sub;
   } catch (error) {
     console.error("Error while getting username from token: ", error);
-    return "Unknown User";
+    return '';
   }
 }
 

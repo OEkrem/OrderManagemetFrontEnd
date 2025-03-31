@@ -3,7 +3,6 @@
 import React, {useState, useEffect} from 'react';
 import MainLayout from '../layouts/MainLayout';
 import OrderDetailsList from '../components/orderDetailsList/orderDetailsList';
-import useAuth from '../context/AuthHook';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOrder, removeFromOrderDetails } from '../store/features/order/orderSlice';
 import { deleteOrderDetails } from '../api/orderDetailsApi';
@@ -11,7 +10,7 @@ import { deleteOrderDetails } from '../api/orderDetailsApi';
 export default function OrderDetailsPage() {
 
   const dispatch = useDispatch();
-  const {user} = useAuth();
+  const {user} = useSelector( (state) => state.auth);
   const { order } = useSelector( (state) => state.order);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,7 +19,7 @@ export default function OrderDetailsPage() {
     const fetchData = async () => {
       try {
         if (user?.id) {
-          await dispatch(fetchOrder(user.id)).unwrap();
+          await dispatch(fetchOrder()).unwrap();
         }
       } catch (err) {
         setError('Veriler alınırken bir hata oluştu.');
@@ -43,7 +42,7 @@ export default function OrderDetailsPage() {
 
   const handleDeleteOrderDetailItem = async (orderDetailId) => {
     try{
-        console.log("Will delete orderDetail with id: ", orderDetailId);
+        //console.log("Will delete orderDetail with id: ", orderDetailId);
         await deleteOrderDetails(orderDetailId);
         dispatch(removeFromOrderDetails(orderDetailId));
         window.location.reload();

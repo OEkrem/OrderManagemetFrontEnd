@@ -1,5 +1,4 @@
 import { NavLink } from 'react-router-dom';
-import  useAuth  from '../context/AuthHook';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import {logout} from '../api/authApi';
@@ -8,23 +7,33 @@ import { Icons } from '../components/Icons/Icons';
 import './header.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOrder } from '../store/features/order/orderSlice';
+import { fetchUser, removeToken } from '../store/features/auth/authSlice';
 
 export default function Header() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, isLogin, roles, removeToken } = useAuth();
+  const { user, isLogin, roles, token } = /*useAuth();*/ useSelector( (state) => state.auth);
   const { order } = useSelector ( (state) => state.order);
   const [basketLenght, setBasketLength] = useState();
 
+  // Sayfa yenilendiğinde kullanıcı bilgilerini yükle
+  useEffect(() => {
+    if (token && !user) {
+      dispatch(fetchUser()).unwrap().catch((error) => {
+        console.error('Kullanıcı bilgileri yüklenirken bir hata oluştu:', error);
+      });
+    }
+  }, [dispatch, token, user]);
+
   useEffect(() => {
     if(user?.id)
-        dispatch(fetchOrder(user.id));
+        dispatch(fetchOrder());
   }, [dispatch, user]);
 
   useEffect(() => {
     if(user?.id)
-      dispatch(fetchOrder(user.id));
+      dispatch(fetchOrder());
   }, [dispatch, user, order?.orderDetails]);
 
   useEffect(() => {
@@ -36,9 +45,9 @@ export default function Header() {
     }
   }, [order?.orderDetailResponses]);
 
-  const handleLogout = () => {
-    logout();
-    removeToken();
+  const handleLogout = async () => {
+    await logout();
+    dispatch(removeToken());
     navigate("/");
   };
 
@@ -93,7 +102,7 @@ export default function Header() {
               </NavLink>
               <NavLink className="btn btn-outline-primary me-2" to="/userdetails">
               <img src={'/image/url/user.png'} alt="User" width="40" height="40" className="rounded-circle me-2" />
-              <span className="me-3">{user.username ? user.username : "User"}</span>
+              <span className="me-3">{user?.username ? user?.username : "User"}</span>
               </NavLink>
               <button className="btn btn-outline-danger" onClick={handleLogout}>Logout</button>
             </>
