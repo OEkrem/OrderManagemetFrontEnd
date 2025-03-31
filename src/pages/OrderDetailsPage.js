@@ -6,10 +6,12 @@ import OrderDetailsList from '../components/orderDetailsList/orderDetailsList';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOrder, removeFromOrderDetails } from '../store/features/order/orderSlice';
 import { deleteOrderDetails } from '../api/orderDetailsApi';
+import { useNavigate } from 'react-router-dom';
 
 export default function OrderDetailsPage() {
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {user} = useSelector( (state) => state.auth);
   const { order } = useSelector( (state) => state.order);
   const [loading, setLoading] = useState(true);
@@ -51,6 +53,10 @@ export default function OrderDetailsPage() {
     }
   };
 
+  const handleProceedToPayment = () => {
+    navigate('/payment'); // Payment sayfasına yönlendirme
+  };
+
   if (loading) {return (<MainLayout><div>Yükleniyor...</div></MainLayout>);}
 
   if (error) {
@@ -78,6 +84,16 @@ export default function OrderDetailsPage() {
         onQuantityChange={handleQuantityChange}
         handleDeleteOrderDetailItem={handleDeleteOrderDetailItem}
          />
+
+        {/* Sepet altına ödeme butonu */}
+        <div className="d-flex justify-content-end mt-4 container">
+          <button
+            className="btn btn-primary"
+            onClick={handleProceedToPayment}
+          >
+            Ödemeye Geç
+          </button>
+        </div>
       </MainLayout>
     </div>
   )

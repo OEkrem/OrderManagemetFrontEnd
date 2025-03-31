@@ -1,6 +1,7 @@
 import './App.css';
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/HomePage';
 import Product from './pages/ProductsPage';
 import Category from './pages/CategoryPage';
@@ -13,6 +14,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { fetchUser, refreshToken } from './store/features/auth/authSlice';
+import PaymentPage from './pages/PaymentPage';
 
 function App() {
 
@@ -37,6 +39,7 @@ function App() {
   return (
 
       <Router>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Product />} />
@@ -46,6 +49,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/orderdetails" element={<OrderDetailsPage />} />
+          <Route path="/payment" element={<PaymentPage/>}/>
           <Route path="/404" element={<NotFoundPage />} />
         </Routes>
       </Router>  
