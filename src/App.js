@@ -15,6 +15,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { fetchUser, refreshToken } from './store/features/auth/authSlice';
 import PaymentPage from './pages/PaymentPage';
+import MyOrdersPage from './pages/MyOrdersPage';
+import ProductDetailPage from './pages/ProductDetailPage';
 
 function App() {
 
@@ -50,6 +52,8 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/orderdetails" element={<OrderDetailsPage />} />
           <Route path="/payment" element={<PaymentPage/>}/>
+          <Route path="/products/:id" element={<ProductDetailPage />} />
+          <Route path="/myorders" element={<MyOrdersPage />} />
           <Route path="/404" element={<NotFoundPage />} />
         </Routes>
       </Router>  

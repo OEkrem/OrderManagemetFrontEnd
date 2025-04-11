@@ -13,7 +13,7 @@ export default function Header() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, isLogin, roles, token } = /*useAuth();*/ useSelector( (state) => state.auth);
+  const { user, isLogin, roles, token } = useSelector( (state) => state.auth);
   const { order } = useSelector ( (state) => state.order);
   const [basketLenght, setBasketLength] = useState();
 
@@ -25,11 +25,6 @@ export default function Header() {
       });
     }
   }, [dispatch, token, user]);
-
-  useEffect(() => {
-    if(user?.id)
-        dispatch(fetchOrder());
-  }, [dispatch, user]);
 
   useEffect(() => {
     if(user?.id)
@@ -98,12 +93,39 @@ export default function Header() {
               { basketLenght ? (
                 <div className='orderDetailsLength'>{basketLenght}</div>
               ) : null}
+              </NavLink>
 
-              </NavLink>
-              <NavLink className="btn btn-outline-primary me-2" to="/userdetails">
-              <img src={'/image/url/user.png'} alt="User" width="40" height="40" className="rounded-circle me-2" />
-              <span className="me-3">{user?.username ? user?.username : "User"}</span>
-              </NavLink>
+              {user?.username ? 
+              (<>
+              <div className="btn btn-outline-primary me-2 position-relative user-dropdown">
+                <img src={'/image/url/user.png'} alt="User" width="40" height="40" className="rounded-circle me-2" />
+                <span className="me-3">{user?.username}</span>
+                {/* Dropdown Menü */}
+                <div className="dropdown-menu">
+                <button
+                    className="dropdown-item"
+                    onClick={() => {navigate("/userdetails");}}
+                  >
+                    Profilim
+                  </button>
+                  <button
+                    className="dropdown-item"
+                    onClick={() => {navigate('/myorders');}}
+                  >
+                    Siparişlerim
+                  </button>
+
+                  <button
+                    className="dropdown-item"
+                    onClick={() => {navigate('/orderdetails');}}
+                  >
+                    Sepetim
+                  </button>
+
+                </div>
+              </div>
+              </>) : null }
+
               <button className="btn btn-outline-danger" onClick={handleLogout}>Logout</button>
             </>
           ) : (

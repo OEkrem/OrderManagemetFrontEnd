@@ -1,10 +1,12 @@
 import React from 'react';
 import { useProducts } from '../context/ProductContext';
+import { useNavigate } from 'react-router-dom';
 import Pagination from '../components/Pagination/Pagination';
 import './productlist.css';
 
 export default function ProductList({handleAddToCard}) {
   const { products, page, setPage, totalPages } = useProducts();
+  const navigate = useNavigate();
 
   return (
     <div className="container my-4">
@@ -23,8 +25,22 @@ export default function ProductList({handleAddToCard}) {
                   <p className="card-text text-muted">{product.description}</p>
                   <p className="card-text fw-bold">{product.price} TL</p>
                 </div>
-                <div className="card-footer bg-white border-0 text-center">
-                  <button className="btn btn-primary w-100" onClick={() => handleAddToCard(product)}>Add to Cart</button>
+                <div className="card-footer bg-white border-0">
+                  <div className="d-flex justify-content-between">
+                    <button
+                      className="btn btn-secondary flex-grow-2"
+                      onClick={() => navigate(`/products/${product.id}`)}
+                    >
+                      Görüntüle
+                    </button>
+                    <div className='flex-grow-1'> &nbsp;</div>
+                    <button
+                      className="btn btn-primary me-2 flex-grow-2"
+                      onClick={() => handleAddToCard(product)}
+                    >
+                      Sepete Ekle
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
