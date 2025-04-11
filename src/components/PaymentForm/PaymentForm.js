@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCreditCard, faCalendarAlt, faLock, faDollarSign } from '@fortawesome/free-solid-svg-icons';
-import './PaymentForm.css'; // Özel CSS dosyası
+import './PaymentForm.css';
 
 export default function PaymentForm({ onPaymentSubmit, amount }) {
   const [cardNumber, setCardNumber] = useState('');
@@ -10,17 +10,58 @@ export default function PaymentForm({ onPaymentSubmit, amount }) {
   const [cardHolderName, setCardHolderName] = useState('');
   const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
-    // Basit bir doğrulama
-    if (!cardNumber || !expiryDate || !cvv || !cardHolderName) {
-      setError('Lütfen tüm alanları doldurun.');
+  const handleCardHolderNameChange = (e) => {
+    let value = e.target.value;
+    value = value.replace(/[^a-zA-Z\s]/g, '');
+    setCardHolderName(value.toUpperCase());
+  };
+
+  const handleCardNumberChange = (e) => {
+    let value = e.target.value;
+    value = value.replace(/\D/g, '');
+
+    if (value.length > 16) 
+      value = value.slice(0, 16);
+
+    value = value.replace(/(.{4})/g, '$1 ').trim();
+    setCardNumber(value);
+  };
+
+  const handleExpiryDateChange = (e) => {
+    let value = e.target.value;
+    value = value.replace(/[^0-9/]/g, '');
+
+    if(expiryDate.length > value.length){
+      setExpiryDate(value);
       return;
     }
 
-    // Ödeme bilgilerini üst bileşene gönder
-    onPaymentSubmit({ cardNumber, expiryDate, cvv, cardHolderName, amount });
+    if (value.length === 2 && !value.includes('/'))
+      value = value + '/';
+
+    if (value.length <= 5)
+      setExpiryDate(value);
+  };
+
+  const handleCvvChange = (e) => {
+    let value = e.target.value;
+    value = value.replace(/\D/g, '');
+    if (value.length > 3) 
+      value = value.slice(0, 3);
+    setCvv(value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const formattedCardNumber = cardNumber.replace(/\s/g, '');
+
+    if (!formattedCardNumber || !expiryDate || !cvv || !cardHolderName) {
+      setError('Lütfen tüm alanları doldurun.');
+      return;
+    }
+    onPaymentSubmit({ formattedCardNumber, expiryDate, cvv, cardHolderName, amount });
     setError(null);
   };
 
@@ -64,7 +105,7 @@ export default function PaymentForm({ onPaymentSubmit, amount }) {
                 className="form-control"
                 id="cardHolderName"
                 value={cardHolderName}
-                onChange={(e) => setCardHolderName(e.target.value)}
+                onChange={handleCardHolderNameChange}
                 placeholder="Ad Soyad"
                 required
               />
@@ -82,7 +123,7 @@ export default function PaymentForm({ onPaymentSubmit, amount }) {
                   className="form-control"
                   id="cardNumber"
                   value={cardNumber}
-                  onChange={(e) => setCardNumber(e.target.value)}
+                  onChange={handleCardNumberChange}
                   placeholder="Kart numaranızı girin"
                   required
                 />
@@ -101,7 +142,7 @@ export default function PaymentForm({ onPaymentSubmit, amount }) {
                   className="form-control"
                   id="expiryDate"
                   value={expiryDate}
-                  onChange={(e) => setExpiryDate(e.target.value)}
+                  onChange={handleExpiryDateChange}
                   placeholder="MM/YY"
                   required
                 />
@@ -120,7 +161,7 @@ export default function PaymentForm({ onPaymentSubmit, amount }) {
                   className="form-control"
                   id="cvv"
                   value={cvv}
-                  onChange={(e) => setCvv(e.target.value)}
+                  onChange={handleCvvChange}
                   placeholder="CVV"
                   required
                 />

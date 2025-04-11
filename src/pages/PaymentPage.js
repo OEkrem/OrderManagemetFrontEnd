@@ -1,17 +1,18 @@
 
 
-// bu ssayfada ödeme yapıalcak ve address seçimi yapılacaktır.
+// bu sayfada ödeme yapıalcak ve address seçimi yapılacaktır.
 
 import React, { useEffect, useState } from 'react';
 import MainLayout from '../layouts/MainLayout';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { fetchAddressesByUserId } from '../api/addressApi';
 import AddressSelector from '../components/AddressSelector/addressSelector';
 import PaymentForm from '../components/PaymentForm/PaymentForm';
+import OrderSummaryList from '../components/OrderSummaryList/OrderSummaryList';
+import { ProductProvider } from '../context/ProductContext';
 
 export default function PaymentPage() {
 
-    const dispatch = useDispatch();
     const {user} = useSelector( (state) => state.auth);
     const {order} = useSelector( (state) => state.order);
 
@@ -19,12 +20,17 @@ export default function PaymentPage() {
     const [ selectedAddress, setSelectedAddress ] = useState(null);
     const [error, setError] = useState(null);
 
+
+    const totalAmount = order?.orderDetailResponses?.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+
     useEffect(() => {
         const fetchAddresses = async () => {
           if (user) {
             try {
               const response = await fetchAddressesByUserId(user.id);
-              console.log("Response addrsss list: ", response);
               setAddresses(response); // Gelen adresleri state'e kaydet
             } catch (err) {
                 setError("Addressler yüklenirken bir hata oluştu..: ", err);
@@ -57,7 +63,7 @@ export default function PaymentPage() {
     <MainLayout>
         
         {/*Adress seçimi yeri*/}
-        <div className='container'>
+        <div className='container mb-5'>
             {error && <div style={{ color: 'red' }}>{error}</div>}
             <h3>Ödeme Sayfası</h3>
             <AddressSelector addresses={addresses} onSelect={handleAddressSelect} />
@@ -68,13 +74,20 @@ export default function PaymentPage() {
                 </div>
             )}
         </div>
+
+        {/*Sipariş Özet Listesi*/}
+        <div className=' container mb-5'>
+          <ProductProvider>
+              <OrderSummaryList orderDetails={order?.orderDetailResponses || []} />
+          </ProductProvider>  
+        </div>
         
         {/*Ödeme işlemleri kısmı*/}
-        <PaymentForm onPaymentSubmit={handlePaymentSubmit} />
-
-        {/*Onaylama kısmı*/}
-
+        <div className='container mb-5'>
+          <PaymentForm onPaymentSubmit={handlePaymentSubmit} amount={totalAmount} /> 
+        </div>
         
+        {/*Onaylama kısmı*/}
 
     </MainLayout>
   )
