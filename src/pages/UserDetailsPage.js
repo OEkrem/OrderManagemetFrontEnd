@@ -42,7 +42,7 @@ export default function UserDetailsPage() {
             <div className='userDetailsPage-container container'>
                 <UserDetailsForm user={user} />
             </div>
-            <div className='userDetailsPage-container container'>
+            <div className='userDetailsPage-container'>
                 <UserNotifications user={user} />
             </div>
 

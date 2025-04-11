@@ -8,9 +8,10 @@ const UserNotifications = ({ user }) => {
     });
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, checked } = e.target;
         setFormData({
             ...formData,
+            [name]: checked,
         });
     };
 
@@ -23,21 +24,44 @@ const UserNotifications = ({ user }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className='user-details-form'>
-            <h3>Bildirim Ayarları</h3>
-            <div>
-                <label>SMS:</label>
-                <input type="checkbox" name="sms" value={formData.username} onChange={handleChange} />
+        <div className="container mt-5">
+            <div className="card shadow-lg p-4">
+                <h3 className="text-center mb-4 text-primary">Bildirim Ayarları</h3>
+                <form onSubmit={handleSubmit}>
+                    <div className="form-check form-switch mb-3">
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="notification_sms"
+                            name="notification_sms"
+                            checked={formData.notification_sms}
+                            onChange={handleChange}
+                        />
+                        <label className="form-check-label" htmlFor="notification_sms">
+                            SMS Bildirimleri
+                        </label>
+                    </div>
+                    <div className="form-check form-switch mb-3">
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="notification_email"
+                            name="notification_email"
+                            checked={formData.notification_email}
+                            onChange={handleChange}
+                        />
+                        <label className="form-check-label" htmlFor="notification_email">
+                            Email Bildirimleri
+                        </label>
+                    </div>
+                    <div className="text-center">
+                        <button type="submit" className="btn btn-primary w-50">
+                            <i className="fas fa-save"></i> Kaydet
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div>
-                <label>Email</label>
-                <input type="checkbox" name="email" value={formData.username} onChange={handleChange} />
-            </div>
-            <span>
-                <button type="submit">Kaydet</button> 
-            </span>
-            
-        </form>
+        </div>
     );
 };
 

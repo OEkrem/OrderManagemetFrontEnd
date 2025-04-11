@@ -49,42 +49,113 @@ const UserDetailsForm = ({ user }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className='user-details-form'>
-            <h3>Kullanıcı Detayları</h3>
-            <div>
-                <label>Kullanıcı Adı:</label>
-                <input type="text" name="username" value={formData.username} onChange={handleChange} />
+        <div className="mt-5">
+            <div className="card shadow-lg p-4">
+                <h3 className="text-center mb-4 text-primary">Kullanıcı Detayları</h3>
+                <form onSubmit={handleSubmit}>
+                    <div className="row">
+                        <div className="col-md-6 mb-3">
+                            <label htmlFor="username" className="form-label">
+                                <i className="fas fa-user"></i> Kullanıcı Adı
+                            </label>
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                className="form-control"
+                                value={formData.username}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="col-md-6 mb-3">
+                            <label htmlFor="firstName" className="form-label">
+                                <i className="fas fa-id-card"></i> Adı
+                            </label>
+                            <input
+                                type="text"
+                                id="firstName"
+                                name="firstName"
+                                className="form-control"
+                                value={formData.firstName}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="col-md-6 mb-3">
+                            <label htmlFor="lastName" className="form-label">
+                                <i className="fas fa-id-card-alt"></i> Soyadı
+                            </label>
+                            <input
+                                type="text"
+                                id="lastName"
+                                name="lastName"
+                                className="form-control"
+                                value={formData.lastName}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="col-md-6 mb-3">
+                            <label htmlFor="email" className="form-label">
+                                <i className="fas fa-envelope"></i> Email
+                            </label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                className="form-control"
+                                value={formData.email}
+                                readOnly
+                            />
+                        </div>
+                        <div className="col-md-6 mb-3">
+                            <label htmlFor="phone" className="form-label">
+                                <i className="fas fa-phone"></i> Telefon
+                            </label>
+                            <input
+                                type="text"
+                                id="phone"
+                                name="phone"
+                                className="form-control"
+                                value={formData.phone}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="col-md-6 mb-3">
+                            <label htmlFor="password" className="form-label">
+                                <i className="fas fa-lock"></i> Şifre
+                            </label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                className="form-control"
+                                value={null}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className="col-md-12 mb-3">
+                            <label htmlFor="roles" className="form-label">
+                                <i className="fas fa-user-tag"></i> Roller
+                            </label>
+                            <input
+                                type="text"
+                                id="roles"
+                                name="roles"
+                                className="form-control"
+                                value={formData.roles.join(', ')}
+                                readOnly
+                            />
+                        </div>
+                    </div>
+                    <div className="text-center">
+                        <button type="submit" className="btn btn-primary w-50">
+                            <i className="fas fa-save"></i> Kaydet
+                        </button>
+                    </div>
+                    {error && <div className="alert alert-danger mt-3">{error}</div>}
+                    {info && <div className="alert alert-success mt-3">{info}</div>}
+                </form>
             </div>
-            <div>
-                <label>Adı:</label>
-                <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} />
-            </div>
-            <div>
-                <label>Soyadı:</label>
-                <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} />
-            </div>
-            <div>
-                <label>Email:</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} className='disabled'/>
-            </div>
-            <div>
-                <label>Telefon:</label>
-                <input type="text" name="phone" value={formData.phone} onChange={handleChange} />
-            </div>
-            <div>
-                <label>Şifre:</label>
-                <input type="password" name="password" value={""} onChange={handleChange} />
-            </div>
-            <div>
-                <label>Roller:</label>
-                <input type="text" name="roles" value={formData.roles.join(', ')} onChange={handleChange} className='disabled'/>
-            </div>
-            <span>
-                <button type="submit">Kaydet</button> 
-            </span>
-            {error && <div style={{ color: 'red' }}>{error}</div>}
-            {info && <div style={{ color: 'green' }}>{info}</div>}
-        </form>
+        </div>
     );
 };
 

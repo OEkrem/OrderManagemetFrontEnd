@@ -1,0 +1,53 @@
+
+  
+  .user-list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  
+  .user-item {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 15px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .user-item:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .user-info h5 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .user-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .user-actions .btn {
+    border-radius: 5px;
+  }
+  
+  .btn-warning {
+    background-color: #ffc107;
+    border: none;
+  }
+  
+  .btn-warning:hover {
+    background-color: #e0a800;
+  }
+  
+  .btn-danger {
+    background-color: #dc3545;
+    border: none;
+  }
+  
+  .btn-danger:hover {
+    background-color: #c82333;
+  }

@@ -1,76 +1,43 @@
+.container {
+  max-width: 800px;
+}
 
-.user-details-form {
-  display: flex;
-  flex-direction: column;
-  justify-content: left;
-  align-items: top;
-  width: 100%;
-  margin: 0 auto;
-  box-sizing: border-box;
-  /*border: 1px solid #ccc;*/
+.card {
   border-radius: 15px;
-  padding: 15px;
+  background-color: #f9f9f9;
 }
 
-.user-details-form h3 {
-  text-align: center;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #ccc;
-}
-
-.user-details-form label {
+.card h3 {
   font-weight: bold;
-  margin-bottom: 5px;
-  width: 15%;
 }
 
-.user-details-form input {
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  border: 1px solid transparent;
-  border-bottom: 1px solid #ccc;
-  transition: .3s;
+.form-label {
+  font-weight: 500;
+  color: #555;
 }
 
-.user-details-form input:focus {
-  outline: none;
+.form-control {
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.form-control:focus {
   border-color: #007bff;
-  border: 1px solid #007bff;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
 }
 
-.user-details-form button {
-  padding: 10px;
+.btn-primary {
   background-color: #007bff;
-  color: white;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 10%;
-  margin-top: 10px;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
 }
 
-.user-details-form button:hover {
+.btn-primary:hover {
   background-color: #0056b3;
 }
 
-.user-details-form button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.user-details-form button:disabled:hover {
-  background-color: #ccc;
-}
-
-.user-details-form .error {
-  color: red;
-  margin-bottom: 10px;
-}
-
-.disabled {
-  pointer-events: none;
-  cursor: not-allowed;
-  opacity: 0.6;
+.alert {
+  font-size: 0.9rem;
+  border-radius: 10px;
 }
